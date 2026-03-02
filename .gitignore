@@ -56,3 +56,4 @@ logs/
 # Temporary files
 tmp_*
 temp_*
+CREDENTIALS.md
