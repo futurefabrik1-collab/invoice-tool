@@ -19,7 +19,7 @@ print(f"OPENAI_API_KEY status: {api_key_status}")
 if os.getenv('OPENAI_API_KEY'):
     print(f"Key preview: {os.getenv('OPENAI_API_KEY')[:20]}...")
 
-app = Flask(__name__, static_folder='../frontend/dist', static_url_path='')
+app = Flask(__name__, static_folder='../dist', static_url_path='')
 CORS(app)
 
 # Paths
@@ -432,21 +432,19 @@ def upload_example():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-if __name__ == '__main__':
-    import os
-    port = int(os.environ.get('PORT', 5001))
-    debug = os.environ.get('FLASK_ENV', 'development') == 'development'
-    app.run(debug=debug, host='0.0.0.0', port=port)
-
-# Serve React frontend in production
+# Serve React frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    """Serve the React frontend in production"""
-    import os
-    dist_dir = os.path.join(os.path.dirname(__file__), '../frontend/dist')
+    """Serve the React frontend"""
+    dist_dir = os.path.join(os.path.dirname(__file__), '../dist')
     
     if path and os.path.exists(os.path.join(dist_dir, path)):
         return send_from_directory(dist_dir, path)
     else:
         return send_from_directory(dist_dir, 'index.html')
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5001))
+    debug = os.environ.get('FLASK_ENV', 'development') == 'development'
+    app.run(debug=debug, host='0.0.0.0', port=port)
