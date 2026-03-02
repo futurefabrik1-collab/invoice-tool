@@ -1,52 +1,17 @@
-import React, { useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
-import 'react-pdf/dist/Page/AnnotationLayer.css'
-import 'react-pdf/dist/Page/TextLayer.css'
+import React from 'react'
 import '../styles/PDFViewer.css'
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
-
 function PDFViewer({ fileUrl, fileName, onClose }) {
-  const [numPages, setNumPages] = useState(null)
-  const [pageNumber, setPageNumber] = useState(1)
-  const [scale, setScale] = useState(1.0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages)
-    setLoading(false)
-  }
-
-  function onDocumentLoadError(error) {
-    console.error('Error loading PDF:', error)
-    setError('Failed to load PDF')
-    setLoading(false)
-  }
-
-  function changePage(offset) {
-    setPageNumber(prevPageNumber => prevPageNumber + offset)
-  }
-
-  function previousPage() {
-    changePage(-1)
-  }
-
-  function nextPage() {
-    changePage(1)
-  }
-
-  function zoomIn() {
-    setScale(prev => Math.min(prev + 0.2, 3.0))
-  }
-
-  function zoomOut() {
-    setScale(prev => Math.max(prev - 0.2, 0.5))
-  }
-
-  function resetZoom() {
-    setScale(1.0)
+  const handleDownload = () => {
+    // Replace /output/ with /download/ and add custom filename as query parameter
+    const downloadUrl = fileUrl.replace('/output/', '/download/')
+    const customFilename = fileName && !fileName.endsWith('.pdf') ? `${fileName}.pdf` : (fileName || 'invoice.pdf')
+    
+    // Add custom filename as query parameter
+    const urlWithName = `${downloadUrl}?name=${encodeURIComponent(customFilename)}`
+    
+    // Use window.location to trigger download - server will handle the filename
+    window.location.href = urlWithName
   }
 
   return (
@@ -57,67 +22,21 @@ function PDFViewer({ fileUrl, fileName, onClose }) {
             <span className="pdf-icon">📄</span>
             <span>{fileName || 'PDF Viewer'}</span>
           </div>
-          <button className="pdf-viewer-close" onClick={onClose}>✕</button>
-        </div>
-
-        <div className="pdf-viewer-controls">
-          <div className="pdf-viewer-nav">
-            <button 
-              onClick={previousPage} 
-              disabled={pageNumber <= 1}
-              className="pdf-nav-btn"
-            >
-              ← Previous
+          <div className="pdf-viewer-actions">
+            <button className="pdf-download-btn" onClick={handleDownload}>
+              ⬇️ Download
             </button>
-            <span className="pdf-page-info">
-              Page {pageNumber} of {numPages || '?'}
-            </span>
-            <button 
-              onClick={nextPage} 
-              disabled={pageNumber >= numPages}
-              className="pdf-nav-btn"
-            >
-              Next →
-            </button>
-          </div>
-
-          <div className="pdf-viewer-zoom">
-            <button onClick={zoomOut} className="pdf-zoom-btn">-</button>
-            <button onClick={resetZoom} className="pdf-zoom-btn">{Math.round(scale * 100)}%</button>
-            <button onClick={zoomIn} className="pdf-zoom-btn">+</button>
+            <button className="pdf-viewer-close" onClick={onClose}>✕</button>
           </div>
         </div>
 
         <div className="pdf-viewer-content">
-          {loading && (
-            <div className="pdf-viewer-loading">
-              <div className="spinner">⏳</div>
-              <p>Loading PDF...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="pdf-viewer-error">
-              <p>❌ {error}</p>
-              <button onClick={onClose}>Close</button>
-            </div>
-          )}
-
-          {!error && (
-            <Document
-              file={fileUrl}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={onDocumentLoadError}
-              loading={null}
-            >
-              <Page 
-                pageNumber={pageNumber} 
-                scale={scale}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-              />
-            </Document>
-          )}
+          <iframe 
+            src={fileUrl}
+            className="pdf-iframe"
+            title={fileName || 'PDF Preview'}
+            frameBorder="0"
+          />
         </div>
       </div>
     </div>

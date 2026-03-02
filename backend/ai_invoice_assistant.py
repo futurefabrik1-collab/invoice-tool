@@ -200,5 +200,7 @@ Return the complete updated invoice."""
             return result
             
         except Exception as e:
+            import traceback
             print(f"Error updating invoice: {e}")
+            print(f"Full traceback: {traceback.format_exc()}")
             return current_invoice

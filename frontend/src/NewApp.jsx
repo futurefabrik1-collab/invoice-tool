@@ -436,10 +436,29 @@ function NewApp() {
     try {
       const response = await api.post('/api/invoice/create', draftInvoice)
       if (response.data.success) {
+        // Extract just the filename from the path
+        const filename = response.data.path.split('/').pop()
+        
+        // Create a descriptive filename: Rechnung_number_client_date.pdf
+        // Clean client name: remove special chars, replace spaces with hyphens
+        const clientName = draftInvoice.client.name
+          .replace(/[^a-zA-Z0-9\s]/g, '')  // Remove special characters
+          .replace(/\s+/g, '-')             // Replace spaces with hyphens
+          .substring(0, 30)                 // Limit length
+        
+        // Clean invoice number (remove type prefix like "Rechnung_")
+        const invoiceNum = draftInvoice.invoice_number
+        
+        // Format date as DD-MM-YYYY
+        const dateStr = draftInvoice.date.replace(/\./g, '-')
+        
+        // Format: Rechnung_number_client_date (e.g., Rechnung_552421_Deutsche-Bahn_02-03-2026)
+        const downloadName = `Rechnung_${invoiceNum}_${clientName}_${dateStr}`
+        
         // Open the generated PDF in the viewer instead of downloading
         setViewingPDF({
-          url: `${window.location.origin}${response.data.path.replace('/Users/markburnett/DevPro/invoice-tool', '')}`,
-          name: response.data.invoice_id
+          url: `${window.location.origin}/output/${filename}`,
+          name: downloadName
         })
         
         alert(`Invoice ${response.data.invoice_id} generated successfully!`)
@@ -583,7 +602,7 @@ function NewApp() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setViewingPDF({
-                        url: `${window.location.origin}/api/examples/${ex.filename || ex.name}`,
+                        url: `${window.location.origin}/api/examples/${ex.id}`,
                         name: ex.name
                       });
                     }}

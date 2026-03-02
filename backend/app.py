@@ -88,9 +88,24 @@ def serve_example_pdf(filename):
 
 @app.route('/output/<path:filename>', methods=['GET'])
 def serve_output_pdf(filename):
-    """Serve generated invoice PDF files"""
+    """Serve generated invoice PDF files for preview"""
     try:
-        return send_from_directory(OUTPUT_DIR, filename)
+        file_path = os.path.join(OUTPUT_DIR, filename)
+        return send_file(file_path, mimetype='application/pdf', as_attachment=False, download_name=filename)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 404
+
+@app.route('/download/<path:filename>', methods=['GET'])
+def download_output_pdf(filename):
+    """Download generated invoice PDF files"""
+    try:
+        file_path = os.path.join(OUTPUT_DIR, filename)
+        # Allow custom download name via query parameter
+        custom_name = request.args.get('name', filename)
+        # Ensure it ends with .pdf
+        if not custom_name.endswith('.pdf'):
+            custom_name = custom_name + '.pdf'
+        return send_file(file_path, mimetype='application/pdf', as_attachment=True, download_name=custom_name)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 404
 
