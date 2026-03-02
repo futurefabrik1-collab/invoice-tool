@@ -784,23 +784,6 @@
     padding: 0.75rem;
   }
   
-  .dropzone-compact {
-    padding: 15px 10px;
-    min-height: 80px;
-  }
-  
-  .dropzone-compact .dropzone-icon {
-    font-size: 24px;
-  }
-  
-  .dropzone-compact .dropzone-text {
-    font-size: 12px;
-  }
-  
-  .dropzone-compact .dropzone-subtext {
-    font-size: 10px;
-  }
-  
   .examples-list {
     max-height: 150px;
   }
