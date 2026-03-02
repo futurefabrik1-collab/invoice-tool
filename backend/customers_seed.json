@@ -1,0 +1,902 @@
+{
+  "Mirko Stock & Matthias Krähenbiel GbR": {
+    "name": "Mirko Stock & Matthias Krähenbiel GbR",
+    "address": "Schwägrichenstraße 13",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:16.772694",
+    "last_used": "2026-02-27T20:20:43.683070",
+    "invoice_count": 14,
+    "invoices": [
+      "Emotionworks Tec Setup Angebot",
+      "Angebot_ff_2508_Emotionworks Tec Setup",
+      "Angebot_DLMD_Emotionworks25",
+      "Angebot_DLMD_Emotionworks25_2",
+      "Angebot_2408_Emotionworks",
+      "Angebot_ff_2408_Emotionworks Tec Setup",
+      "Rechnung_552415_emotionworks_LVB_mobi",
+      "Angebot_AFF230609_Emotionworks",
+      "Rechnung_552415_emotionworks",
+      "Rechnung_552314_emotionworks1"
+    ]
+  },
+  "Heiner Füssel": {
+    "name": "Heiner Füssel",
+    "address": "Solmsstr. 8-18",
+    "city": "Frankfurt",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:17.993010",
+    "last_used": "2026-02-27T20:20:58.853022",
+    "invoice_count": 46,
+    "invoices": [
+      "Angebot_ff_2501_db_LLF_HybridVA",
+      "Angebot_ff_2505_DB_Anfrage3",
+      "Angebot_ff_2505_DB_Anfrage2",
+      "Angebot_ff_2505_DB_Anfrage1",
+      "Angebot_ff_2502_DB_Livestream",
+      "Angebot_ff_2503_DB_360grad tour",
+      "Filmprojekt Angebot",
+      "Angebot_ff_2509_DB_Postpro",
+      "Angebot_ff_2502_DB_Livestreammischer",
+      "Filmprojekt Angebot Sept 2023",
+      "Angebot_ff_2511_DB_Livestream",
+      "Angebot_ff_2408_DB_Digital Twin",
+      "Angebot_ff_2311_db_hybrid workshop",
+      "Angebot_ff_2403_db_LEAN Awards",
+      "Angebot_ff_2406_db_Video_Setup",
+      "Angebot_ff_2401_DB_Install_MAC_HDD_MICs",
+      "Angebot_ff_2402_db_Livestream",
+      "Angebot_ff_2309_db_Videoproduktion_einbau",
+      "Angebot_ff_2509_db_LLF_HybridVA",
+      "Angebot_ff_2310_db_Livestream_llf",
+      "Angebot_ff_2309_db_Videoproduktion_einbau_cinderella",
+      "Angebot_ff_2304_db_Fotojob",
+      "Angebot_ff_2308_db_Livestream_Arbeitsschutz",
+      "Angebot_ff_2308_db_Livestream_Kanban",
+      "Angebot_ff_2304_db_Fahrzeugporträt",
+      "Angebot_ff_2409_DB_Workshop",
+      "Angebot_ff_2308_db_Livestream",
+      "Angebot_ff_2311_db_digitaltwin",
+      "Angebot_ff_2410_DB_Workshop",
+      "Angebot_ff_2410_DB_Livestream",
+      "Angebot_ff_2510_DB_Postpro",
+      "Angebot_ff_2403_db_LEAN Awards mit Anfahrt",
+      "Angebot_ff_2408_DB_konzeptentwicklung",
+      "Angebot_ff_2304_db_Livestream_Grundwissen"
+    ]
+  },
+  "ANEgenberger Produktion GmbH": {
+    "name": "ANEgenberger Produktion GmbH",
+    "address": "Markranstädter Straße 80",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:19.729439",
+    "last_used": "2026-02-27T20:20:12.041468",
+    "invoice_count": 6,
+    "invoices": [
+      "Acoustic Panels Offer",
+      "Akustik Angebot",
+      "Angebot_ff_2501_Akustik"
+    ]
+  },
+  "Kristina Röwer": {
+    "name": "Kristina Röwer",
+    "address": "Stadtwerke Leipzig GmbH, Augustusplatz 7",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:24.849289",
+    "last_used": "2026-02-27T20:18:17.680627",
+    "invoice_count": 3,
+    "invoices": [
+      "Angebot_ff_2407 l-gruppe Rosenthal Bsp. Angebot erklärvideo",
+      "Rechnung_552421_LG_Klärwerk_scan1"
+    ]
+  },
+  "ANSPRIND GmbH FEDERAL AGENCY FOR BREAKTHROUGH INNOVATION": {
+    "name": "ANSPRIND GmbH FEDERAL AGENCY FOR BREAKTHROUGH INNOVATION",
+    "address": "Lagerhofstraße 4",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:26.390954",
+    "last_used": "2026-02-27T20:18:09.161915",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_ff_2507_SPRIN-D"
+    ]
+  },
+  "Burnett & Manhardt GbR": {
+    "name": "Burnett & Manhardt GbR",
+    "address": "Klingenstr. 22",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:30.075405",
+    "last_used": "2026-02-27T20:20:57.601096",
+    "invoice_count": 9,
+    "invoices": [
+      "Angebot_ff_2502_Klassik Stiftung Weimar VJ",
+      "Angebot_ff_2501_Speak_about_Ai",
+      "Rechnung_552408 LEMA",
+      "Angebot_ff_2401_blp",
+      "Angebot_ff_2505_sept",
+      "Rechnung_552301_Paar_coaching",
+      "Angebot_ff_2508_about source"
+    ]
+  },
+  "obias M. Karow": {
+    "name": "obias M. Karow",
+    "address": "Montgelasstr. 2",
+    "city": "München",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:31.796072",
+    "last_used": "2026-02-27T20:19:19.613041",
+    "invoice_count": 5,
+    "invoices": [
+      "Angebot_ff_2510_Stiftungsmarktplatz 3",
+      "Angebot_ff_2510_Stiftungsmarktplatz 2",
+      "Angebot_ff_2510_Stiftungsmarktplatz 3_vers2"
+    ]
+  },
+  "ANSEPT Competence Center Leipzig University": {
+    "name": "ANSEPT Competence Center Leipzig University",
+    "address": "Ritterstraße 9-1",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:43.898910",
+    "last_used": "2026-02-27T14:45:43.898923",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2505_sept"
+    ]
+  },
+  "Klassik Stiftung Weimar": {
+    "name": "Klassik Stiftung Weimar",
+    "address": "Burgplatz 4",
+    "city": "Weimar",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:46.152790",
+    "last_used": "2026-02-27T20:19:10.808116",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_ff_2502_Klassik Stiftung Weimar"
+    ]
+  },
+  "Stadtwerke Leipzig GmbH": {
+    "name": "Stadtwerke Leipzig GmbH",
+    "address": "Augustusplatz 7",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:47.517006",
+    "last_used": "2026-02-27T20:20:26.581485",
+    "invoice_count": 22,
+    "invoices": [
+      "Angebot_ff_2512_L-Gruppe_Klärwerk_mechanik",
+      "Angebot_ff_2503_L-Gruppe_Klärwerk_4_voninnen",
+      "Angebot_ff_2501_L-Gruppe_Klärwerk_3",
+      "Angebot_ff_2501_L-Gruppe_Klärwerk_2",
+      "Angebot_ff_2501_L-Gruppe_Klärwerk_0",
+      "Angebot_ff_2501_L-Gruppe_Klärwerk_1",
+      "AFF250104",
+      "AFF250105",
+      "000003",
+      "000013",
+      "Rechnung_2412_Lgruppe november",
+      "Rechnung_2412_Lgruppe Oktober",
+      "Rechnung_2411_Lgruppe August"
+    ]
+  },
+  "Obias M. Karow": {
+    "name": "Obias M. Karow",
+    "address": "Montgelasstr. 2",
+    "city": "München",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:49.020105",
+    "last_used": "2026-02-27T14:45:49.020123",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2510_Stiftungsmarktplatz 3_vers2"
+    ]
+  },
+  "bürosüd plus GmbH": {
+    "name": "bürosüd plus GmbH",
+    "address": "Lindwurmstrasse 88",
+    "city": "80337 München",
+    "email": "",
+    "first_seen": "2026-02-27T14:45:51.606752",
+    "last_used": "2026-02-27T14:45:51.606772",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2502_buero_sued"
+    ]
+  },
+  "Sebastian Helmund": {
+    "name": "Sebastian Helmund",
+    "address": "Nordstr. 104",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:46:00.055254",
+    "last_used": "2026-02-27T20:20:05.590623",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_ff_2502_urban_jungle"
+    ]
+  },
+  "Anabout source GmbH": {
+    "name": "Anabout source GmbH",
+    "address": "Klingenstr. 22",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:46:07.781517",
+    "last_used": "2026-02-27T20:20:25.164760",
+    "invoice_count": 3,
+    "invoices": [
+      "Angebot_ff_2508_about source2",
+      "Angebot_ff_2508_about source"
+    ]
+  },
+  "Agenberger Produktion GmbH": {
+    "name": "Agenberger Produktion GmbH",
+    "address": "Markranstädter Straße 80",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T14:58:31.509137",
+    "last_used": "2026-02-27T14:58:31.509141",
+    "invoice_count": 1,
+    "invoices": []
+  },
+  "Landesverband der Kultur- und Kreativwirtschaft Sachsen e.V.": {
+    "name": "Landesverband der Kultur- und Kreativwirtschaft Sachsen e.V.",
+    "address": "Zietenstraße 2a",
+    "city": "Chemnitz",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:19.612387",
+    "last_used": "2026-02-27T20:18:44.385166",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_ff_2405 KI Workshop",
+      "Rechnung_552317_Betakonferenz"
+    ]
+  },
+  "INPUT Consulting gGmbH": {
+    "name": "INPUT Consulting gGmbH",
+    "address": "Jacobstr. 5",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:27.074500",
+    "last_used": "2026-02-27T20:19:34.694502",
+    "invoice_count": 5,
+    "invoices": [
+      "Angebot_ff_2302_HDS_livestream",
+      "2403_HDS Angebot_final",
+      "2403_HDS Angebot",
+      "Angebot_ff_2402_HDS_Aufzeichnung",
+      "Angebot_ff_2402_HDS_livestream"
+    ]
+  },
+  "Stage2go - Technisches Veranstaltungsmanagement GmbH": {
+    "name": "Stage2go - Technisches Veranstaltungsmanagement GmbH",
+    "address": "Plautstraße 27-29",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:31.475201",
+    "last_used": "2026-02-27T20:17:31.475213",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552320_stage2go_design"
+    ]
+  },
+  "ANBEKA Projekt 2 GmbH & Co. KG": {
+    "name": "ANBEKA Projekt 2 GmbH & Co. KG",
+    "address": "Könneritzstr 33",
+    "city": "04229 Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:33.619367",
+    "last_used": "2026-02-27T20:17:33.619393",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552417_Beka_Delitzscher"
+    ]
+  },
+  "Stadt Leipzig, Referat Demokratie und gesellschaftlicher Zusammenhalt": {
+    "name": "Stadt Leipzig, Referat Demokratie und gesellschaftlicher Zusammenhalt",
+    "address": "Martin-Luther-Ring 4",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:35.087555",
+    "last_used": "2026-02-27T20:17:35.087587",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2312_Juko_Umfrage"
+    ]
+  },
+  "Bundesverband Bildender Künstlerinnen und Künstler e.V.": {
+    "name": "Bundesverband Bildender Künstlerinnen und Künstler e.V.",
+    "address": "Markgrafendamm 24 - Haus 16",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:37.316778",
+    "last_used": "2026-02-27T20:20:34.910596",
+    "invoice_count": 4,
+    "invoices": [
+      "Angebot_ff_2402_BBL",
+      "Angebot_ff_2402_BBL2",
+      "Angebot_ff_2402_BBK_Grassi",
+      "Rechnung_552403_bbk"
+    ]
+  },
+  "Sophia Schmelz": {
+    "name": "Sophia Schmelz",
+    "address": "Industriestraße 9",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:38.746700",
+    "last_used": "2026-02-27T20:18:53.399229",
+    "invoice_count": 2,
+    "invoices": [
+      "Rechnung_552322_KL_Effie",
+      "Rechnung_552319_KL_Effie"
+    ]
+  },
+  "Stadt Leipzig": {
+    "name": "Stadt Leipzig",
+    "address": "Postfach 10 05 51",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:40.692955",
+    "last_used": "2026-02-27T20:21:01.214500",
+    "invoice_count": 5,
+    "invoices": [
+      "Rechnung_552411_popup_edit",
+      "Rechnung_552333_Juko_postpro",
+      "Angebot_ff_2311_Juko_postpro",
+      "Rechnung_552334_popup",
+      "Rechnung_552327_stadtleipzig_jugendkonferenz"
+    ]
+  },
+  "Ibug EV": {
+    "name": "Ibug EV",
+    "address": "Markranstädter Straße 2a",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:42.127238",
+    "last_used": "2026-02-27T20:18:50.736353",
+    "invoice_count": 2,
+    "invoices": [
+      "Rechnung_552329_ibug",
+      "Rechnung_552329_ibug Kopie"
+    ]
+  },
+  "Kemmerich, Nele": {
+    "name": "Kemmerich, Nele",
+    "address": "Gewandhaus zu Leipzig Augustusplatz 8",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:43.664102",
+    "last_used": "2026-02-27T20:19:18.178790",
+    "invoice_count": 3,
+    "invoices": [
+      "Rechnung_552328_gewandhaus_bewerbung Kopie",
+      "Rechnung_552402_gewandhaus_bewerbung",
+      "Rechnung_552328_gewandhaus_bewerbung"
+    ]
+  },
+  "H+L® Baustoff GmbH": {
+    "name": "H+L® Baustoff GmbH",
+    "address": "Am Lungwitzbach 1",
+    "city": "Glauchau",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:50.832376",
+    "last_used": "2026-02-27T20:17:50.832400",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552419a_H&L_Delitzscher2"
+    ]
+  },
+  "Chantal Darmstädter": {
+    "name": "Chantal Darmstädter",
+    "address": "Lindower Str 18",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:52.266356",
+    "last_used": "2026-02-27T20:18:58.518366",
+    "invoice_count": 3,
+    "invoices": [
+      "Rechnung_552310_DriveBeta",
+      "Angebot_ff_2303_Drive Beta",
+      "Rechnung_552313_2_DriveBeta_fdl2"
+    ]
+  },
+  "ANDRIVE beta GmbH": {
+    "name": "ANDRIVE beta GmbH",
+    "address": "Lindower Str 18",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:53.391472",
+    "last_used": "2026-02-27T20:17:53.391495",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552302_Drive Beta_DJ"
+    ]
+  },
+  "ANemotion works Mirko Stock & Matthias Krähenbiel GbR": {
+    "name": "ANemotion works Mirko Stock & Matthias Krähenbiel GbR",
+    "address": "Schwägrichenstr. 130",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:54.927886",
+    "last_used": "2026-02-27T20:17:54.927917",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2311_emotionsworks"
+    ]
+  },
+  "Leipziger Verlags- und Druckereigesellschaft mbH & Co. KG": {
+    "name": "Leipziger Verlags- und Druckereigesellschaft mbH & Co. KG",
+    "address": "Peterssteinweg 19",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:56.266202",
+    "last_used": "2026-02-27T20:17:56.266225",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552409 Machn"
+    ]
+  },
+  "Hotel Michaelis GmbH": {
+    "name": "Hotel Michaelis GmbH",
+    "address": "Paul-Gruner-Straße 44",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:17:57.590488",
+    "last_used": "2026-02-27T20:17:57.590510",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2301_Michaelis Hotels"
+    ]
+  },
+  "Referat Demokratie und gesellschaftlicher Zusammenhalt": {
+    "name": "Referat Demokratie und gesellschaftlicher Zusammenhalt",
+    "address": "Martin-Luther-Ring 4-6",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:00.764528",
+    "last_used": "2026-02-27T20:18:00.764541",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2311_stadtleipzig"
+    ]
+  },
+  "BEKA Projekt GmbH & Co.KG": {
+    "name": "BEKA Projekt GmbH & Co.KG",
+    "address": "Könneritzstr 33",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:03.649799",
+    "last_used": "2026-02-27T20:18:03.649812",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552315_beka"
+    ]
+  },
+  "Deutsche Bahn AG": {
+    "name": "Deutsche Bahn AG",
+    "address": "Elisabeth-Schwarzhaupt-Platz 1",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:05.270210",
+    "last_used": "2026-02-27T20:20:16.169858",
+    "invoice_count": 3,
+    "invoices": [
+      "Rechnung_552319_DB_08.11.23",
+      "Rechnung_552318_DB_13.11.23",
+      "Rechnung_552313_DB_Fotografie"
+    ]
+  },
+  "ANBEKA Grundbesitz GmbH & Co. KG": {
+    "name": "ANBEKA Grundbesitz GmbH & Co. KG",
+    "address": "Könneritzstr 3",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:16.431281",
+    "last_used": "2026-02-27T20:18:16.431305",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552404_Timelapse_KH"
+    ]
+  },
+  "BEKA Immobilien - Usunov GmbH": {
+    "name": "BEKA Immobilien - Usunov GmbH",
+    "address": "Könneritzstr 33",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:25.544089",
+    "last_used": "2026-02-27T20:20:19.517786",
+    "invoice_count": 3,
+    "invoices": [
+      "Angebot_ff_2310_ BEKA Timelapse",
+      "Angebot_ff_2309_ BEKA",
+      "Angebot_ff_2311_ BEKA Timelapse2"
+    ]
+  },
+  "ver.di - Vereinte Dienstleistungsgewerkschaft Bundesvorstand": {
+    "name": "ver.di - Vereinte Dienstleistungsgewerkschaft Bundesvorstand",
+    "address": "Paula-Thiede-Ufer 10",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:26.980274",
+    "last_used": "2026-02-27T20:19:05.584991",
+    "invoice_count": 3,
+    "invoices": [
+      "Rechnung_552332_Livestream_verdi",
+      "Rechnung_552312_Livestream_verdi",
+      "Rechnung_552312_verdi_livestream"
+    ]
+  },
+  "Kunstkraftwerk Leipzig GmbH": {
+    "name": "Kunstkraftwerk Leipzig GmbH",
+    "address": "Saalfelder Straße 8b",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:29.541480",
+    "last_used": "2026-02-27T20:18:29.541505",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552331_KKW_Alice im wunderland"
+    ]
+  },
+  "Black Label Immobilien Leipzig GmbH": {
+    "name": "Black Label Immobilien Leipzig GmbH",
+    "address": "Könneritzstr. 33",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:32.405324",
+    "last_used": "2026-02-27T20:18:32.405355",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552405_BLP"
+    ]
+  },
+  "HHL gemeinnützige GmbH": {
+    "name": "HHL gemeinnützige GmbH",
+    "address": "Jahnallee 5",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:18:33.837293",
+    "last_used": "2026-02-27T20:18:33.837299",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552330_HHl_DLMD"
+    ]
+  },
+  "HHL gemeinnützige HHL": {
+    "name": "HHL gemeinnützige HHL",
+    "address": "Jahnallee 59",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:12.161831",
+    "last_used": "2026-02-27T20:19:12.161838",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2310_HHL"
+    ]
+  },
+  "Peter Müller": {
+    "name": "Peter Müller",
+    "address": "Naumburgerstr. 48",
+    "city": "04229 Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:13.571810",
+    "last_used": "2026-02-27T20:19:13.571832",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552311_Agumenda_Mwst-Ausgleich"
+    ]
+  },
+  "DB Training, Consulting & Business Skills": {
+    "name": "DB Training, Consulting & Business Skills",
+    "address": "Solmsstr. 8-18",
+    "city": "Frankfurt",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:24.220463",
+    "last_used": "2026-02-27T20:20:33.272761",
+    "invoice_count": 3,
+    "invoices": [
+      "Angebot_ff_2402_db_Livestream_x2",
+      "Angebot_ff_2304_db_Livestream_kanban",
+      "Angebot_ff_2304_db_Livestream_ergo"
+    ]
+  },
+  "AgUmenda GmbH": {
+    "name": "AgUmenda GmbH",
+    "address": "Naumburgerstr. 48",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:25.556625",
+    "last_used": "2026-02-27T20:19:51.767167",
+    "invoice_count": 2,
+    "invoices": [
+      "Rechnung_552308_Agumenda_Stickstofftest_Korrigiert- 19%",
+      "Rechnung_552307_Agumenda_Feldtag_Korrigiert-19%"
+    ]
+  },
+  "Halo Soundsystem Ltd": {
+    "name": "Halo Soundsystem Ltd",
+    "address": "Flat 4, 1 Castle Road",
+    "city": "Clevedon, N. Somerset, BS21 7BX",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:27.074900",
+    "last_used": "2026-02-27T20:19:27.074927",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552303_Halo_soundsystem"
+    ]
+  },
+  "Anbürosüd plus GmbH": {
+    "name": "Anbürosüd plus GmbH",
+    "address": "Lindwurmstrasse 88",
+    "city": "München",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:32.104764",
+    "last_used": "2026-02-27T20:19:32.104784",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2502_buero_sued"
+    ]
+  },
+  "Kulturverein Kulturfenster e.V.": {
+    "name": "Kulturverein Kulturfenster e.V.",
+    "address": "Karl-Liebknecht Straße 36",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:38.561258",
+    "last_used": "2026-02-27T20:20:31.806273",
+    "invoice_count": 2,
+    "invoices": [
+      "Rechnung_552321_Subardo-Festival",
+      "Rechnung_552318_Subardo-Festival"
+    ]
+  },
+  "Nele Kemmerich": {
+    "name": "Nele Kemmerich",
+    "address": "Gewandhaus zu Leipzig, Augustusplatz 8",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:43.778086",
+    "last_used": "2026-02-27T20:20:03.236039",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_ff_2401_GWH Bewerbung",
+      "Angebot_ff_2301_GWH Bewerbung2"
+    ]
+  },
+  "European Energy Exchange AG": {
+    "name": "European Energy Exchange AG",
+    "address": "Augustusplatz 9",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:45.007264",
+    "last_used": "2026-02-27T20:19:45.007282",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2404_EEX"
+    ]
+  },
+  "Astrid Kasperek": {
+    "name": "Astrid Kasperek",
+    "address": "Hansaallee 150",
+    "city": "Frankfurt am Main",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:46.237584",
+    "last_used": "2026-02-27T20:19:46.237604",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_2302_blickwinkel"
+    ]
+  },
+  "Paolo Löfﬂer": {
+    "name": "Paolo Löfﬂer",
+    "address": "Saalfelder Str. 8",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:19:59.754428",
+    "last_used": "2026-02-27T20:19:59.754449",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2310_KKW"
+    ]
+  },
+  "Agata Dlugos": {
+    "name": "Agata Dlugos",
+    "address": "Aurelienstraße 48",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:10.756189",
+    "last_used": "2026-02-27T20:20:10.756213",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552410 agata"
+    ]
+  },
+  "Katharina Steigel": {
+    "name": "Katharina Steigel",
+    "address": "Kurfürstendamm 225",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:14.909356",
+    "last_used": "2026-02-27T20:20:14.909379",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2310_European Film Club"
+    ]
+  },
+  "ANBEKA Projekt GmbH & Co.KG": {
+    "name": "ANBEKA Projekt GmbH & Co.KG",
+    "address": "Könneritzstr 33",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:20.952880",
+    "last_used": "2026-02-27T20:20:20.952911",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2311_ BEKA Timelapse3"
+    ]
+  },
+  "Kulturverein Kulturfenster-Leipzig e.V.": {
+    "name": "Kulturverein Kulturfenster-Leipzig e.V.",
+    "address": "Biedermannstraße 32a",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:28.005488",
+    "last_used": "2026-02-27T20:20:50.236756",
+    "invoice_count": 3,
+    "invoices": [
+      "Rechnung_552413_Subardo2",
+      "Rechnung_552412_Subardo1",
+      "Rechnung_552414_Subardo_fusion"
+    ]
+  },
+  "Jakob Jochmann pixelcraft innovation GmbH": {
+    "name": "Jakob Jochmann pixelcraft innovation GmbH",
+    "address": "Peterssteinweg 14",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:36.123750",
+    "last_used": "2026-02-27T20:20:36.123772",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552305_Pixelcraft_Dokumentation"
+    ]
+  },
+  "Halo Sound Systems Ltd": {
+    "name": "Halo Sound Systems Ltd",
+    "address": "Flat 4, 1 Castle Road",
+    "city": "Clevedon North Somerset",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:38.692500",
+    "last_used": "2026-02-27T20:20:38.692523",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2302_Halo"
+    ]
+  },
+  "Amt für Wirtschaftsförderung": {
+    "name": "Amt für Wirtschaftsförderung",
+    "address": "Martin-Luther-Ring 4-6",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:40.106669",
+    "last_used": "2026-02-27T20:20:40.106689",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2405_ZZL"
+    ]
+  },
+  "Vincent Rohr": {
+    "name": "Vincent Rohr",
+    "address": "Klingenstraße 22",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:45.015909",
+    "last_used": "2026-02-27T20:20:45.015953",
+    "invoice_count": 1,
+    "invoices": [
+      "kündigung_vince"
+    ]
+  },
+  "ANINPUT Consulting gGmbH": {
+    "name": "ANINPUT Consulting gGmbH",
+    "address": "Jacobstr. 5",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:46.477577",
+    "last_used": "2026-02-27T20:20:46.477593",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552306_hds_livestream"
+    ]
+  },
+  "about source GmbH": {
+    "name": "about source GmbH",
+    "address": "Klingenstr. 22",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:47.623964",
+    "last_used": "2026-02-27T20:20:47.623983",
+    "invoice_count": 1,
+    "invoices": [
+      "Rechnung_552418_FFA_About Source"
+    ]
+  },
+  "ICL Ingenieur Consult GmbH": {
+    "name": "ICL Ingenieur Consult GmbH",
+    "address": "Diezmannstraße 5",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:54.771677",
+    "last_used": "2026-02-27T20:20:54.771685",
+    "invoice_count": 1,
+    "invoices": [
+      "Angebot_ff_2401_ICL"
+    ]
+  },
+  "KREATIVES LEIPZIG e.V.": {
+    "name": "KREATIVES LEIPZIG e.V.",
+    "address": "Industriestraße 9",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-02-27T20:20:56.277950",
+    "last_used": "2026-03-01T14:37:43.780055",
+    "invoice_count": 2,
+    "invoices": [
+      "Angebot_AFF230508_KreativesLeipzig_Streamingkisten",
+      "000031"
+    ]
+  },
+  "Live Event Productions GmbH": {
+    "name": "Live Event Productions GmbH",
+    "address": "Musterstraße 12",
+    "city": "Berlin",
+    "email": "",
+    "first_seen": "2026-03-02T10:04:45.089093",
+    "last_used": "2026-03-02T10:04:45.089097",
+    "invoice_count": 1,
+    "invoices": [
+      "000042"
+    ]
+  },
+  "Max Mustermann": {
+    "name": "Max Mustermann",
+    "address": "Musterstraße 1",
+    "city": "Frankfurt",
+    "email": "",
+    "first_seen": "2026-03-02T11:32:38.598804",
+    "last_used": "2026-03-02T11:32:38.598809",
+    "invoice_count": 1,
+    "invoices": [
+      "AFF230501"
+    ]
+  },
+  "Test": {
+    "name": "Test",
+    "address": "",
+    "city": "",
+    "email": "",
+    "first_seen": "2026-03-02T11:34:08.255728",
+    "last_used": "2026-03-02T11:34:08.255730",
+    "invoice_count": 1,
+    "invoices": [
+      "TEST001"
+    ]
+  },
+  "Leipzig Opera House": {
+    "name": "Leipzig Opera House",
+    "address": "Opernplatz 2",
+    "city": "Leipzig",
+    "email": "",
+    "first_seen": "2026-03-02T11:47:04.064134",
+    "last_used": "2026-03-02T11:47:04.064138",
+    "invoice_count": 1,
+    "invoices": [
+      "2404_Leipzig_Opera_3D_Scan"
+    ]
+  }
+}
