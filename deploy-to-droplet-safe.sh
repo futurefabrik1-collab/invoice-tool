@@ -48,11 +48,20 @@ pip install -r requirements.txt
 
 # Step 5: Install frontend dependencies
 echo "📦 Step 5: Installing frontend dependencies..."
+cd frontend
 npm install
 
 # Step 6: Build frontend
 echo "🏗️  Step 6: Building frontend..."
 npm run build
+
+# Move build files to dist at project root
+cd ..
+if [ -d "frontend/dist" ]; then
+    rm -rf dist
+    cp -r frontend/dist dist
+    echo "✅ Frontend build copied to /var/www/invoice-tool/dist"
+fi
 
 # Step 7: Create .env file if it doesn't exist
 echo "⚙️  Step 7: Setting up environment file..."
