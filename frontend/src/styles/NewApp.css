@@ -705,15 +705,6 @@
   .total-section {
     font-size: 1.1rem;
   }
-  
-  .dropzone-container {
-    gap: 10px;
-  }
-  
-  .dropzone-compact {
-    padding: 20px 15px;
-    min-height: 90px;
-  }
 }
 
 @media (max-width: 480px) {
