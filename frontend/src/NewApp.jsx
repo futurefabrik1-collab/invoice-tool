@@ -4,8 +4,9 @@ import PDFViewer from './components/PDFViewer'
 import './styles/NewApp.css'
 
 // Configure axios to use backend URL
+// Use relative URLs for production, works on any domain/IP
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:5001'
+  baseURL: window.location.origin
 })
 
 function NewApp() {
@@ -437,7 +438,7 @@ function NewApp() {
       if (response.data.success) {
         // Open the generated PDF in the viewer instead of downloading
         setViewingPDF({
-          url: `http://127.0.0.1:5001${response.data.path.replace('/Users/markburnett/DevPro/invoice-tool', '')}`,
+          url: `${window.location.origin}${response.data.path.replace('/Users/markburnett/DevPro/invoice-tool', '')}`,
           name: response.data.invoice_id
         })
         
@@ -582,7 +583,7 @@ function NewApp() {
                     onClick={(e) => {
                       e.stopPropagation();
                       setViewingPDF({
-                        url: `http://127.0.0.1:5001/api/examples/${ex.filename || ex.name}`,
+                        url: `${window.location.origin}/api/examples/${ex.filename || ex.name}`,
                         name: ex.name
                       });
                     }}
@@ -671,7 +672,7 @@ function NewApp() {
                         <button 
                           className="btn-view-small"
                           onClick={() => setViewingPDF({
-                            url: `http://127.0.0.1:5000/api/pdf/view/${file.name}`,
+                            url: `${window.location.origin}/api/pdf/view/${file.name}`,
                             name: file.name
                           })}
                         >
@@ -713,7 +714,7 @@ function NewApp() {
                     onClick={() => selectSignature(sig.filename)}
                   >
                     <img 
-                      src={`http://127.0.0.1:5000/api/signatures/view/${sig.filename}`}
+                      src={`${window.location.origin}/api/signatures/view/${sig.filename}`}
                       alt={sig.filename}
                       className="signature-preview"
                     />
