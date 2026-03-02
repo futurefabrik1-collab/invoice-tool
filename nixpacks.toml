@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["python311", "nodejs-18_x", "tesseract"]
+
+[phases.install]
+cmds = [
+  "pip install -r requirements.txt",
+  "cd frontend && npm install"
+]
+
+[phases.build]
+cmds = ["cd frontend && npm run build"]
+
+[start]
+cmd = "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 backend.app:app"

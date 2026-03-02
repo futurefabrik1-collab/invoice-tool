@@ -1,0 +1,58 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+frontend/dist/
+frontend/.vite/
+
+# Data files (sensitive)
+data/customers.json
+data/invoice_numbering.json
+
+# Generated files
+output/*.pdf
+!output/.gitkeep
+
+# Signatures (may contain sensitive info)
+signatures/*.png
+signatures/*.jpg
+signatures/*.pdf
+!signatures/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Backup
+*.tar.gz
+*.zip
+
+# Temporary files
+tmp_*
+temp_*

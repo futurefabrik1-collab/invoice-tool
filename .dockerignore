@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+frontend/dist/
+frontend/.vite/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Data (will be volume mounted)
+data/customers.json
+data/invoice_numbering.json
+output/*.pdf
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Backups
+*.tar.gz
+*.zip
+
+# Temporary
+tmp_*
+temp_*
