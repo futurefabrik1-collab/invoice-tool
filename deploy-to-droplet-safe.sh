@@ -13,7 +13,7 @@ echo ""
 echo "📦 Step 1: Updating package lists..."
 apt-get update
 
-# Step 2: Install system dependencies (skip npm - nodejs from nodesource includes it)
+# Step 2: Install system dependencies
 echo "📦 Step 2: Installing system dependencies..."
 apt-get install -y \
     python3.11 \
@@ -72,11 +72,11 @@ else
     echo "✅ .env file already exists"
 fi
 
-# Step 8: Create systemd service
+# Step 8: Create systemd service (using Flask app correctly)
 echo "⚙️  Step 8: Creating systemd service..."
 cat > /etc/systemd/system/invoice-tool.service << 'SYSTEMD_EOF'
 [Unit]
-Description=Invoice Tool Backend
+Description=Invoice Tool Backend (Flask)
 After=network.target
 
 [Service]
@@ -84,7 +84,8 @@ Type=simple
 User=root
 WorkingDirectory=/var/www/invoice-tool
 Environment="PATH=/var/www/invoice-tool/venv/bin"
-ExecStart=/var/www/invoice-tool/venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8080
+Environment="FLASK_APP=backend/app.py"
+ExecStart=/var/www/invoice-tool/venv/bin/gunicorn --bind 0.0.0.0:8080 --workers 4 --chdir /var/www/invoice-tool backend.app:app
 Restart=always
 RestartSec=10
 
