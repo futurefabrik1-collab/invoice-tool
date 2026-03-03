@@ -234,6 +234,17 @@ class InvoiceGenerator:
         
         # PROJEKTBESCHREIBUNG (if provided) - concise bullet list for clean alignment
         project_desc = data.get('project_description', '')
+
+        # Be resilient to AI output type mismatches (string/list/dict)
+        if isinstance(project_desc, list):
+            project_desc = "\n".join(str(x) for x in project_desc if x is not None)
+        elif isinstance(project_desc, dict):
+            project_desc = "\n".join(f"{k}: {v}" for k, v in project_desc.items())
+        elif project_desc is None:
+            project_desc = ''
+        else:
+            project_desc = str(project_desc)
+
         if project_desc and project_desc.strip():
             c.setFillColor(light_grey)
             c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
