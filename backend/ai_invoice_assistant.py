@@ -71,10 +71,10 @@ Generate invoice data in the following JSON format:
         "city": "string"
     },
     "project_name": "string (optional)",
-    "project_description": "string (DETAILED 100-200 word description of the project, services, deliverables, and scope)",
+    "project_description": "string (3-4 concise bullet points using '\u2022 ', each bullet practical and clear)",
     "items": [
         {
-            "description": "string (brief item description)",
+            "description": "string (brief item description, target 1 line, max 2 lines in PDF)",
             "quantity": number,
             "rate": number,
             "amount": number
@@ -88,12 +88,10 @@ IMPORTANT:
 - If type is "Rechnung": include due_date (e.g., "14 Tage netto"), do NOT include expiry_date
 
 IMPORTANT for project_description:
-- Must be DETAILED and comprehensive (100-200 words)
-- Describe the complete project scope and all deliverables
-- Explain the workflow: what will be done and how
-- Include technical specifications (equipment, software, formats)
-- Mention rights transfer if applicable
-- Be professional and thorough
+- Write 3-4 concise bullet points (prefix each with "• ")
+- Keep each bullet short (ideally one line, max two lines in PDF)
+- Focus on scope, key deliverables, and timeline/quality notes
+- Avoid long paragraphs
 - Use context from reference documents if provided
 
 IMPORTANT for service bundling:

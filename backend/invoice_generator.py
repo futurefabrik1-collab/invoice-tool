@@ -232,26 +232,43 @@ class InvoiceGenerator:
             c.drawString(main_content_start, y_main, project_name)
             y_main -= 8*mm
         
-        # PROJEKTBESCHREIBUNG (if provided) - with grey background - FIXED
+        # PROJEKTBESCHREIBUNG (if provided) - concise bullet list for clean alignment
         project_desc = data.get('project_description', '')
-        if project_desc and project_desc.strip():  # Check for non-empty
+        if project_desc and project_desc.strip():
             c.setFillColor(light_grey)
             c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
             c.setFillColor(grey_color)
             c.setFont("Helvetica-Bold", 7)
             c.drawString(main_content_start, y_main, "PROJEKTBESCHREIBUNG:")
             y_main -= 5*mm
+
             c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 7)
-            # Wrap description to fit width - allow multi-line
+            c.setFont("Helvetica", 9)
+
             from textwrap import wrap
-            # Calculate chars per line based on actual page width
-            chars_per_line = int((right_margin - main_content_start) * 0.35)  # Better calculation
-            wrapped_lines = wrap(project_desc, width=chars_per_line)
-            for line in wrapped_lines[:8]:  # Allow up to 8 lines for 200 words
-                c.drawString(main_content_start, y_main, line)
-                y_main -= 3.5*mm
-            y_main -= 4*mm
+            # Keep bullets compact and visually aligned with other sections
+            bullet_width_chars = 70
+
+            # Build bullets from lines/semicolon-splits; fallback to sentence chunks
+            raw_parts = []
+            for line in project_desc.replace('•', '').split('\n'):
+                raw_parts.extend([p.strip() for p in line.split(';') if p.strip()])
+
+            bullets = raw_parts if raw_parts else [project_desc.strip()]
+            bullets = bullets[:4]  # keep block compact
+
+            for bullet in bullets:
+                wrapped = wrap(bullet, width=bullet_width_chars)
+                if not wrapped:
+                    continue
+                c.drawString(main_content_start, y_main, f"• {wrapped[0]}")
+                y_main -= 4*mm
+                # Optional continuation line for readability (max 2 lines per bullet)
+                if len(wrapped) > 1:
+                    c.drawString(main_content_start + 4*mm, y_main, wrapped[1])
+                    y_main -= 4*mm
+
+            y_main -= 3*mm
         
         # TABLE - Line items with grey header background
         y_main -= 8*mm  # More space before table
@@ -274,7 +291,7 @@ class InvoiceGenerator:
         c.line(main_content_start, y_main, right_margin, y_main)
         y_main -= 5*mm
         
-        # Line items with extensive descriptions
+        # Line items with concise descriptions (1-2 lines per position)
         c.setFont("Helvetica", 8)
         items = data.get('items', [])
         from textwrap import wrap
@@ -284,16 +301,16 @@ class InvoiceGenerator:
             rate = float(item.get('rate', 0))
             total = quantity * rate
             
-            # Description - allow up to 200 words, multi-line
-            description = item.get('description', '')
-            desc_width = int((main_content_start + 75*mm - main_content_start) / 2.5)  # Chars per line
-            wrapped_desc = wrap(description, width=desc_width)
+            # Description limited to 1-2 lines for stable alignment
+            description = (item.get('description', '') or '').strip()
+            desc_width = 48  # tuned to description column width
+            wrapped_desc = wrap(description, width=desc_width) if description else ['']
             
             # Track starting position for this item
             item_start_y = y_main
             
-            # Draw description (up to 10 lines ~ 200 words)
-            for line_idx, line in enumerate(wrapped_desc[:10]):
+            # Draw description (max 2 lines)
+            for line in wrapped_desc[:2]:
                 c.drawString(main_content_start, y_main, line)
                 y_main -= 4*mm
             
