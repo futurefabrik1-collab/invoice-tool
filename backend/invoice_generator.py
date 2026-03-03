@@ -379,24 +379,24 @@ class InvoiceGenerator:
         signature_name = str(data.get('signature_name', 'Florian Manhardt') or 'Florian Manhardt')
         signature_filename = data.get('signature_file')
         if signature_filename:
-            # Add uploaded signature image
+            # Add uploaded signature image (200% larger, centered on page)
             signatures_dir = os.path.join(os.path.dirname(self.templates_dir), 'signatures')
             signature_path = os.path.join(signatures_dir, signature_filename)
             if os.path.exists(signature_path):
-                # Position signature in lower right
-                sig_width = 50*mm
-                sig_height = 20*mm
-                sig_x = right_margin - sig_width
-                sig_y = 20*mm
+                sig_width = 100*mm
+                sig_height = 40*mm
+                sig_x = (width - sig_width) / 2
+                sig_y = 18*mm
                 c.drawImage(signature_path, sig_x, sig_y, width=sig_width, height=sig_height, preserveAspectRatio=True, mask='auto')
 
         # Always print signature text block (name definable in draft)
-        y_footer -= 5*mm
+        # Move down by ~2 lines and center-align
+        y_footer -= 13*mm
         c.setFont("Helvetica", 7)
-        c.drawString(main_content_start, y_footer, "Mit freundlichen Grüßen,")
+        c.drawCentredString(width / 2, y_footer, "Mit freundlichen Grüßen,")
         y_footer -= 4*mm
         c.setFont("Helvetica-Oblique", 8)
-        c.drawString(main_content_start, y_footer, signature_name)
+        c.drawCentredString(width / 2, y_footer, signature_name)
         
         c.save()
         
