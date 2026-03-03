@@ -375,7 +375,8 @@ class InvoiceGenerator:
         footer_text = "Alle kommerziellen Nutzungsrechte und Vervielfältigungsrechte werden mit Begleichen der Rechnung an Sie übertragen."
         c.drawString(main_content_start, y_footer, footer_text)
         
-        # Signature area - lower right
+        # Signature area
+        signature_name = str(data.get('signature_name', 'Florian Manhardt') or 'Florian Manhardt')
         signature_filename = data.get('signature_file')
         if signature_filename:
             # Add uploaded signature image
@@ -388,14 +389,14 @@ class InvoiceGenerator:
                 sig_x = right_margin - sig_width
                 sig_y = 20*mm
                 c.drawImage(signature_path, sig_x, sig_y, width=sig_width, height=sig_height, preserveAspectRatio=True, mask='auto')
-        else:
-            # Default text signature if no image
-            y_footer -= 5*mm
-            c.setFont("Helvetica", 7)
-            c.drawString(main_content_start, y_footer, "Mit freundlichen Grüßen,")
-            y_footer -= 4*mm
-            c.setFont("Helvetica-Oblique", 8)
-            c.drawString(main_content_start, y_footer, "Florian Manhardt")
+
+        # Always print signature text block (name definable in draft)
+        y_footer -= 5*mm
+        c.setFont("Helvetica", 7)
+        c.drawString(main_content_start, y_footer, "Mit freundlichen Grüßen,")
+        y_footer -= 4*mm
+        c.setFont("Helvetica-Oblique", 8)
+        c.drawString(main_content_start, y_footer, signature_name)
         
         c.save()
         

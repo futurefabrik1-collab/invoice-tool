@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, send_file, send_from_directory
+from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
@@ -146,7 +147,8 @@ def create_invoice():
             'due_date': data.get('due_date', ''),
             'project_name': data.get('project_name', ''),
             'project_description': data.get('project_description', ''),
-            'signature_file': data.get('signature_file', '')
+            'signature_file': data.get('signature_file', ''),
+            'signature_name': data.get('signature_name', 'Florian Manhardt')
         }
         
         # Save customer to database
@@ -378,14 +380,18 @@ def upload_signature():
         if file.filename == '':
             return jsonify({'success': False, 'error': 'Empty filename'}), 400
         
-        # Validate file type (images only)
-        allowed_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.pdf'}
+        # Validate file type (signature images only)
+        allowed_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
         file_ext = os.path.splitext(file.filename)[1].lower()
         if file_ext not in allowed_extensions:
-            return jsonify({'success': False, 'error': 'Only image files (PNG, JPG, GIF) or PDF allowed'}), 400
+            return jsonify({'success': False, 'error': 'Only image files are allowed (PNG, JPG, JPEG, GIF, WEBP)'}), 400
         
-        # Save to signatures directory
-        safe_filename = file.filename.replace(' ', '_')
+        # Save to signatures directory (safe + unique filename)
+        base_name = secure_filename(file.filename)
+        if not base_name:
+            return jsonify({'success': False, 'error': 'Invalid filename'}), 400
+        name_no_ext, ext = os.path.splitext(base_name)
+        safe_filename = f"{name_no_ext}_{int(datetime.now().timestamp())}{ext}"
         file_path = os.path.join(SIGNATURES_DIR, safe_filename)
         file.save(file_path)
         
@@ -403,7 +409,7 @@ def list_signatures():
     try:
         signatures = []
         for filename in os.listdir(SIGNATURES_DIR):
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.pdf')):
+            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
                 file_path = os.path.join(SIGNATURES_DIR, filename)
                 signatures.append({
                     'filename': filename,

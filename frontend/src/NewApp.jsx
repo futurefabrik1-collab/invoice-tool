@@ -36,7 +36,8 @@ function NewApp() {
     project_description: '',
     items: [],
     notes: '',
-    signature_file: ''  // Signature filename
+    signature_file: '',  // Signature filename
+    signature_name: 'Florian Manhardt'
   })
   
   // State for signatures
@@ -348,9 +349,17 @@ function NewApp() {
       })
       
       if (response.data.success) {
-        setDraftInvoice(response.data.invoice_data)
+        const aiData = response.data.invoice_data || {}
+        const mergedInvoice = {
+          ...draftInvoice,
+          ...aiData,
+          // Preserve signature selection/name unless AI explicitly provides them
+          signature_file: aiData.signature_file ?? draftInvoice.signature_file,
+          signature_name: aiData.signature_name ?? draftInvoice.signature_name
+        }
+        setDraftInvoice(mergedInvoice)
         // Trigger preview update
-        generatePreview(response.data.invoice_data)
+        generatePreview(mergedInvoice)
       }
     } catch (error) {
       console.error('Error updating draft:', error)
@@ -524,6 +533,7 @@ function NewApp() {
             onDrop={handleReferenceDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
+            onClick={() => document.getElementById('reference-file-input')?.click()}
           >
             <div className="dropzone-content">
               <span className="dropzone-icon">📎</span>
@@ -543,6 +553,7 @@ function NewApp() {
             onDrop={handleSignatureDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
+            onClick={() => document.getElementById('signature-file-input')?.click()}
           >
             <div className="dropzone-content">
               <span className="dropzone-icon">✍️</span>
@@ -550,7 +561,7 @@ function NewApp() {
               <input
                 type="file"
                 onChange={handleSignatureUpload}
-                accept=".png,.jpg,.jpeg,.gif,.pdf"
+                accept=".png,.jpg,.jpeg,.gif,.webp"
                 style={{ display: 'none' }}
                 id="signature-file-input"
               />
@@ -729,7 +740,7 @@ function NewApp() {
                 {signatures.map(sig => (
                   <div 
                     key={sig.filename}
-                    className={`signature-item ${selectedSignature === sig.filename ? 'selected' : ''}`}
+                    className={`signature-item ${(draftInvoice.signature_file || selectedSignature) === sig.filename ? 'selected' : ''}`}
                     onClick={() => selectSignature(sig.filename)}
                   >
                     <img 
@@ -944,6 +955,16 @@ function NewApp() {
                 placeholder="Payment terms, thank you note, etc."
                 rows={4}
               />
+
+              <div className="form-field" style={{ marginTop: '12px' }}>
+                <label>Signature Name (footer)</label>
+                <input
+                  type="text"
+                  value={draftInvoice.signature_name || ''}
+                  onChange={(e) => handleDraftFieldChange('signature_name', e.target.value)}
+                  placeholder="e.g., Florian Manhardt"
+                />
+              </div>
             </div>
           </div>
         </div>
