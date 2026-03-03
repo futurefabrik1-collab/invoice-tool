@@ -386,7 +386,8 @@ class InvoiceGenerator:
                 sig_width = 100*mm
                 sig_height = 40*mm
                 sig_x = (width - sig_width) / 2
-                sig_y = 18*mm
+                # Move signature further down (requested)
+                sig_y = 8*mm
                 c.drawImage(signature_path, sig_x, sig_y, width=sig_width, height=sig_height, preserveAspectRatio=True, mask='auto')
 
         # Always print signature text block (name definable in draft)
