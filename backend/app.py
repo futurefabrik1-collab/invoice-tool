@@ -139,7 +139,14 @@ def create_invoice():
             'client': data.get('client', {}),
             'items': data.get('items', []),
             'notes': data.get('notes', ''),
-            'type': data.get('type', 'Rechnung')  # Rechnung or Angebot
+            'type': data.get('type', 'Rechnung'),  # Rechnung or Angebot
+            # Preserve all optional fields used by the PDF layout
+            'zeitraum': data.get('zeitraum', ''),
+            'expiry_date': data.get('expiry_date', ''),
+            'due_date': data.get('due_date', ''),
+            'project_name': data.get('project_name', ''),
+            'project_description': data.get('project_description', ''),
+            'signature_file': data.get('signature_file', '')
         }
         
         # Save customer to database
