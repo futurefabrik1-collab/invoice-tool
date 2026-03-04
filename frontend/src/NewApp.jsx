@@ -9,6 +9,8 @@ const api = axios.create({
   baseURL: window.location.origin
 })
 
+const DRAFT_STORAGE_KEY = 'invoice_tool_saved_draft_v1'
+
 function NewApp() {
   // State for dropdowns and inputs
   const [exampleInvoices, setExampleInvoices] = useState([])
@@ -440,6 +442,60 @@ function NewApp() {
     }))
   }
 
+
+  const handleSaveDraft = () => {
+    try {
+      const payload = {
+        draftInvoice,
+        prompt,
+        referenceFiles,
+        selectedSignature,
+        selectedExampleId: selectedExample?.id || null,
+        savedAt: new Date().toISOString()
+      }
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload))
+      alert('✅ Draft saved')
+    } catch (error) {
+      console.error('Error saving draft:', error)
+      alert('Error saving draft: ' + error.message)
+    }
+  }
+
+  const handleLoadDraft = () => {
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY)
+      if (!raw) {
+        alert('No saved draft found')
+        return
+      }
+
+      const payload = JSON.parse(raw)
+      const loadedDraft = payload?.draftInvoice
+      if (!loadedDraft) {
+        alert('Saved draft is invalid')
+        return
+      }
+
+      setDraftInvoice(loadedDraft)
+      setPrompt(payload?.prompt || '')
+      setReferenceFiles(Array.isArray(payload?.referenceFiles) ? payload.referenceFiles : [])
+      setSelectedSignature(payload?.selectedSignature || loadedDraft?.signature_file || null)
+
+      if (payload?.selectedExampleId) {
+        const match = exampleInvoices.find(ex => ex.id === payload.selectedExampleId)
+        setSelectedExample(match || null)
+      } else {
+        setSelectedExample(null)
+      }
+
+      generatePreview(loadedDraft)
+      alert('✅ Draft loaded')
+    } catch (error) {
+      console.error('Error loading draft:', error)
+      alert('Error loading draft: ' + error.message)
+    }
+  }
+
   const handleGeneratePDF = async () => {
     setLoading(true)
     try {
@@ -765,13 +821,29 @@ function NewApp() {
         <div className="draft-panel">
           <div className="draft-header">
             <h2>Live Draft</h2>
-            <button 
-              className="btn-generate"
-              onClick={handleGeneratePDF}
-              disabled={loading}
-            >
-              {loading ? 'Generating...' : '📥 Generate PDF'}
-            </button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <button
+                className="btn-update"
+                onClick={handleSaveDraft}
+                disabled={loading}
+              >
+                💾 Save Draft
+              </button>
+              <button
+                className="btn-update"
+                onClick={handleLoadDraft}
+                disabled={loading}
+              >
+                📂 Load Draft
+              </button>
+              <button 
+                className="btn-generate"
+                onClick={handleGeneratePDF}
+                disabled={loading}
+              >
+                {loading ? 'Generating...' : '📥 Generate PDF'}
+              </button>
+            </div>
           </div>
 
           <div className="draft-form">
