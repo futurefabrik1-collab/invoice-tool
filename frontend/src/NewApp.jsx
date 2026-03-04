@@ -52,6 +52,8 @@ function NewApp() {
   // State for search filters
   const [invoiceSearchTerm, setInvoiceSearchTerm] = useState('')
   const [customerSearchTerm, setCustomerSearchTerm] = useState('')
+  const [itemCatalog, setItemCatalog] = useState([])
+  const [itemSearchTerm, setItemSearchTerm] = useState('')
   
   // UI State
   const [loading, setLoading] = useState(false)
@@ -61,6 +63,7 @@ function NewApp() {
   useEffect(() => {
     loadExampleInvoices()
     loadCustomers()
+    loadItemsCatalog()
     loadNextInvoiceNumber()
     loadSignatures()
   }, [])
@@ -223,6 +226,17 @@ function NewApp() {
     }
   }
 
+  const loadItemsCatalog = async (q = '') => {
+    try {
+      const response = await api.get(`/api/catalog/items${q ? `?q=${encodeURIComponent(q)}` : ''}`)
+      if (response.data.success) {
+        setItemCatalog(response.data.items || [])
+      }
+    } catch (error) {
+      console.error('Error loading item catalog:', error)
+    }
+  }
+
   const handleExampleChange = async (e) => {
     const exampleId = e.target.value
     if (!exampleId) {
@@ -333,9 +347,16 @@ function NewApp() {
     try {
       const response = await api.post('/api/upload-example', formData)
       if (response.data.success) {
-        // Reload examples list
+        // Reload curated lists after indexing
         await loadExampleInvoices()
-        alert(`Example invoice "${file.name}" uploaded successfully!`)
+        await loadCustomers()
+        await loadItemsCatalog()
+        const idx = response.data.index_result
+        if (idx?.indexed) {
+          alert(`Example invoice "${file.name}" imported. Indexed customer: ${idx.customer || 'n/a'}, items: ${idx.items_indexed || 0}`)
+        } else {
+          alert(`Example invoice "${file.name}" uploaded, but indexing failed: ${idx?.reason || 'unknown reason'}`)
+        }
       }
     } catch (error) {
       console.error('Error uploading example:', error)
@@ -356,39 +377,18 @@ function NewApp() {
   }
 
   const handleUpdateDraft = async () => {
-    if (!prompt.trim() && !selectedExample) {
-      alert('Please enter a prompt/notes or select an example invoice first')
+    if (!prompt.trim()) {
+      alert('Please enter prompt/notes first')
       return
     }
     
     setLoading(true)
     try {
-      // If example is selected, tell AI to use it as reference
-      let enhancedPrompt = prompt
-      if (selectedExample && prompt) {
-        enhancedPrompt = `${prompt}\n\nUse example invoice "${selectedExample.name}" as a reference for formatting and structure.`
-      } else if (selectedExample && !prompt) {
-        enhancedPrompt = `Create an invoice similar to the example "${selectedExample.name}". Extract and use the client information from that invoice.`
-      }
-      
-      // Prepare example invoice data if selected
-      let exampleData = null
-      if (selectedExample) {
-        const response = await api.get('/api/parse-examples')
-        if (response.data.success) {
-          const parsedExample = response.data.examples.find(ex => 
-            ex.filename === selectedExample.id || ex.filename === selectedExample.name
-          )
-          exampleData = parsedExample
-        }
-      }
-      
       // Call AI to generate/update invoice
       const response = await api.post('/api/ai/generate-invoice', {
-        prompt: enhancedPrompt,
-        example_invoice: exampleData || draftInvoice,
-        reference_files: referenceFiles.map(f => f.content),
-        example_name: selectedExample?.name
+        prompt,
+        example_invoice: draftInvoice,
+        reference_files: referenceFiles.map(f => f.content)
       })
       
       if (response.data.success) {
@@ -472,6 +472,18 @@ function NewApp() {
         quantity: 1,
         rate: 0,
         amount: 0
+      }]
+    }))
+  }
+
+  const addItemFromCatalog = (catalogItem) => {
+    setDraftInvoice(prev => ({
+      ...prev,
+      items: [...prev.items, {
+        description: catalogItem.description || '',
+        quantity: 1,
+        rate: Number(catalogItem.default_rate || 0),
+        amount: Number(catalogItem.default_rate || 0)
       }]
     }))
   }
@@ -671,56 +683,10 @@ function NewApp() {
         {/* Left Panel - Controls */}
         <div className="controls-panel">
           <div className="control-group">
-            <label>Previous Rechnung ({exampleInvoices.length} available)</label>
-            
-            {/* Search input for invoices */}
-            <input
-              type="text"
-              placeholder="🔍 Search invoices..."
-              value={invoiceSearchTerm}
-              onChange={(e) => setInvoiceSearchTerm(e.target.value)}
-              className="search-input"
-              style={{ marginBottom: '10px', width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-            />
-            
-            {/* List-style selector with fixed height and scroll */}
-            <div className="examples-list">
-              {exampleInvoices
-                .filter(ex => ex.name.toLowerCase().includes(invoiceSearchTerm.toLowerCase()))
-                .map(ex => (
-                <div 
-                  key={ex.id}
-                  className={`example-list-item ${selectedExample?.id === ex.id ? 'selected' : ''}`}
-                  onClick={() => {
-                    const event = { target: { value: ex.id } };
-                    handleExampleChange(event);
-                  }}
-                >
-                  <div className="example-list-icon">
-                    {ex.type === 'Angebot' ? '📋' : '📄'}
-                  </div>
-                  <div className="example-list-content">
-                    <div className="example-list-name">{ex.name}</div>
-                    <div className="example-list-meta">
-                      <span className="example-list-type">{ex.type}</span>
-                    </div>
-                  </div>
-                  <button 
-                    className="example-list-preview"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setViewingPDF({
-                        url: `${window.location.origin}/api/examples/${ex.id}`,
-                        name: ex.name
-                      });
-                    }}
-                    title="Preview this invoice"
-                  >
-                    👁️
-                  </button>
-                </div>
-              ))}
-            </div>
+            <label>Example Invoice Import ({exampleInvoices.length} files in pool)</label>
+            <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+              Drop a PDF in the top “Example Invoice PDF” dropzone to auto-scrape customer + billed items into the curated database.
+            </p>
           </div>
 
           <div className="control-group">
@@ -817,6 +783,33 @@ function NewApp() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="control-group">
+            <label>Item Library ({itemCatalog.length})</label>
+            <input
+              type="text"
+              placeholder="🔍 Search items or job type..."
+              value={itemSearchTerm}
+              onChange={(e) => {
+                setItemSearchTerm(e.target.value)
+                loadItemsCatalog(e.target.value)
+              }}
+              className="search-input"
+              style={{ marginBottom: '10px', width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+            <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', background: '#fff' }}>
+              {itemCatalog.slice(0, 50).map((it, idx) => (
+                <div key={`${it.description}-${idx}`} style={{ padding: '8px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 500 }}>{it.description}</div>
+                    <div style={{ fontSize: '11px', color: '#666' }}>{it.job_type} • €{Number(it.default_rate || 0).toFixed(2)}</div>
+                  </div>
+                  <button className="btn-add-item" onClick={() => addItemFromCatalog(it)}>Use</button>
+                </div>
+              ))}
+              {itemCatalog.length === 0 && <div style={{ padding: '12px', color: '#999' }}>No items found</div>}
+            </div>
           </div>
 
           <button 

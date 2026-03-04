@@ -8,6 +8,7 @@ from invoice_parser import InvoiceParser
 from customer_db import CustomerDatabase
 from ai_invoice_assistant import AIInvoiceAssistant
 import json
+import re
 from datetime import datetime
 
 # Load environment variables from .env file
@@ -31,6 +32,7 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 SIGNATURES_DIR = os.path.join(BASE_DIR, 'signatures')
 CUSTOMER_DB_PATH = os.path.join(DATA_DIR, 'customers.json')
+ITEM_DB_PATH = os.path.join(DATA_DIR, 'items_catalog.json')
 
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -42,9 +44,101 @@ invoice_generator = InvoiceGenerator(TEMPLATES_DIR, OUTPUT_DIR)
 invoice_parser = InvoiceParser(EXAMPLE_DIR)
 customer_db = CustomerDatabase(CUSTOMER_DB_PATH)
 
+def load_items_catalog():
+    if os.path.exists(ITEM_DB_PATH):
+        try:
+            with open(ITEM_DB_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_items_catalog(catalog):
+    os.makedirs(os.path.dirname(ITEM_DB_PATH), exist_ok=True)
+    with open(ITEM_DB_PATH, 'w', encoding='utf-8') as f:
+        json.dump(catalog, f, indent=2, ensure_ascii=False)
+
+def infer_job_type(description: str):
+    d = (description or '').lower()
+    if any(k in d for k in ['3d', 'render', 'visualisierung', 'animation']):
+        return '3D'
+    if any(k in d for k in ['livestream', 'stream', 'moderation']):
+        return 'Livestream'
+    if any(k in d for k in ['schnitt', 'editing', 'post', 'color grading']):
+        return 'Postproduktion'
+    if any(k in d for k in ['video', 'filming', 'dreh', 'kamera']):
+        return 'Videoproduktion'
+    if any(k in d for k in ['workshop', 'training', 'seminar']):
+        return 'Workshop'
+    return 'Sonstiges'
+
+def upsert_item_catalog(items, source='manual'):
+    catalog = load_items_catalog()
+    now = datetime.now().isoformat()
+    for item in items or []:
+        desc = str(item.get('description', '') or '').strip()
+        if not desc:
+            continue
+        key = re.sub(r'\s+', ' ', desc.lower())
+        rate = float(item.get('rate', 0) or 0)
+        job_type = infer_job_type(desc)
+        if key not in catalog:
+            catalog[key] = {
+                'description': desc,
+                'job_type': job_type,
+                'default_rate': rate,
+                'use_count': 1,
+                'sources': [source],
+                'first_seen': now,
+                'last_used': now
+            }
+        else:
+            entry = catalog[key]
+            entry['description'] = desc
+            entry['job_type'] = job_type or entry.get('job_type', 'Sonstiges')
+            if rate > 0:
+                entry['default_rate'] = rate
+            entry['use_count'] = entry.get('use_count', 0) + 1
+            entry['last_used'] = now
+            sources = set(entry.get('sources', []))
+            sources.add(source)
+            entry['sources'] = sorted(list(sources))
+    save_items_catalog(catalog)
+
 # Initialize AI assistant - it will now pick up the API key from environment
 print(f"Initializing AI Assistant with key: {os.getenv('OPENAI_API_KEY')[:20]}..." if os.getenv('OPENAI_API_KEY') else "Initializing AI Assistant without key")
 ai_assistant = AIInvoiceAssistant()
+
+def extract_and_index_example_invoice(filename):
+    from extract_invoice_text import get_example_invoice_text
+    text = get_example_invoice_text(filename, EXAMPLE_DIR)
+    if not text:
+        return {'indexed': False, 'reason': 'No text extracted'}
+
+    extraction_prompt = (
+        "Extract structured invoice info from this real invoice text. "
+        "Return a JSON invoice object with client, items, type, date, invoice_number, notes. "
+        "Use only information present in text. Keep line items concise."
+    )
+
+    structured = ai_assistant.generate_invoice_from_prompt(
+        extraction_prompt,
+        example_invoice=None,
+        reference_files=[text[:18000]]
+    )
+
+    client = structured.get('client', {}) if isinstance(structured, dict) else {}
+    items = structured.get('items', []) if isinstance(structured, dict) else []
+
+    if client and client.get('name'):
+        customer_db.add_or_update_customer(client, structured.get('invoice_number', filename))
+    upsert_item_catalog(items, source=f'example:{filename}')
+
+    return {
+        'indexed': True,
+        'customer': client.get('name', ''),
+        'items_indexed': len(items)
+    }
 
 # Initialize invoice numbering system
 from invoice_numbering import InvoiceNumbering
@@ -129,6 +223,40 @@ def search_customers():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/catalog/items', methods=['GET'])
+def get_catalog_items():
+    try:
+        q = request.args.get('q', '').lower().strip()
+        catalog = list(load_items_catalog().values())
+        if q:
+            catalog = [i for i in catalog if q in i.get('description', '').lower() or q in i.get('job_type', '').lower()]
+        catalog.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
+        return jsonify({'success': True, 'items': catalog})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/catalog/job-types', methods=['GET'])
+def get_catalog_job_types():
+    try:
+        types = sorted({v.get('job_type', 'Sonstiges') for v in load_items_catalog().values()})
+        return jsonify({'success': True, 'job_types': types})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/catalog/rebuild', methods=['POST'])
+def rebuild_catalog_from_examples():
+    try:
+        results = []
+        for filename in os.listdir(EXAMPLE_DIR):
+            if filename.lower().endswith('.pdf'):
+                try:
+                    results.append({'file': filename, **extract_and_index_example_invoice(filename)})
+                except Exception as ex:
+                    results.append({'file': filename, 'indexed': False, 'reason': str(ex)})
+        return jsonify({'success': True, 'results': results})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/invoice/create', methods=['POST'])
 def create_invoice():
     """Create a new invoice based on provided data"""
@@ -157,6 +285,9 @@ def create_invoice():
                 invoice_data['client'], 
                 invoice_data.get('invoice_number')
             )
+
+        # Keep items catalog curated from real generated invoices
+        upsert_item_catalog(invoice_data.get('items', []), source='generated')
         
         # Generate invoice
         output_path = invoice_generator.generate(invoice_data)
@@ -467,10 +598,12 @@ def upload_example():
         file_path = os.path.join(EXAMPLE_DIR, file.filename)
         file.save(file_path)
         
+        index_result = extract_and_index_example_invoice(file.filename)
         return jsonify({
             'success': True, 
             'filename': file.filename,
-            'path': file_path
+            'path': file_path,
+            'index_result': index_result
         })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
