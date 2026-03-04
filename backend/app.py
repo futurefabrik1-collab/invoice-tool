@@ -665,13 +665,32 @@ def view_signature(filename):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/signatures/delete/<filename>', methods=['DELETE'])
+@app.route('/api/signatures/delete/<path:filename>', methods=['DELETE'])
 def delete_signature(filename):
     """Delete a signature image from pool"""
     try:
         safe_name = os.path.basename(filename)
         file_path = os.path.join(SIGNATURES_DIR, safe_name)
 
+        if not os.path.exists(file_path):
+            return jsonify({'success': False, 'error': 'Signature not found'}), 404
+
+        os.remove(file_path)
+        return jsonify({'success': True, 'filename': safe_name})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/signatures/delete', methods=['POST'])
+def delete_signature_post():
+    """Delete signature by JSON body for frontend compatibility"""
+    try:
+        data = request.get_json(silent=True) or {}
+        filename = data.get('filename', '')
+        safe_name = os.path.basename(str(filename))
+        if not safe_name:
+            return jsonify({'success': False, 'error': 'Missing filename'}), 400
+
+        file_path = os.path.join(SIGNATURES_DIR, safe_name)
         if not os.path.exists(file_path):
             return jsonify({'success': False, 'error': 'Signature not found'}), 404
 

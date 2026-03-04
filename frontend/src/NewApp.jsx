@@ -69,7 +69,7 @@ function NewApp() {
   
   const loadSignatures = async () => {
     try {
-      const response = await api.get('/api/signatures/list')
+      const response = await api.get(`/api/signatures/list?t=${Date.now()}`)
       if (response.data.success) {
         setSignatures(response.data.signatures)
       }
@@ -169,7 +169,14 @@ function NewApp() {
     if (!window.confirm(`Delete signature "${current}"?`)) return
 
     try {
-      const response = await api.delete(`/api/signatures/delete/${encodeURIComponent(current)}`)
+      // Prefer body-based delete endpoint (more robust with special chars)
+      let response
+      try {
+        response = await api.post('/api/signatures/delete', { filename: current })
+      } catch (_e) {
+        response = await api.delete(`/api/signatures/delete/${encodeURIComponent(current)}`)
+      }
+
       if (response.data.success) {
         await loadSignatures()
         setSelectedSignature(null)
