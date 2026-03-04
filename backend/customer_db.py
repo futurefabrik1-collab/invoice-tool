@@ -6,6 +6,8 @@ import json
 import os
 from datetime import datetime
 
+import re
+
 class CustomerDatabase:
     def __init__(self, db_path):
         self.db_path = db_path
@@ -31,6 +33,21 @@ class CustomerDatabase:
         except Exception as e:
             print(f"Error saving customer DB: {e}")
     
+    def _sanitize_customer_name(self, name: str):
+        n = (name or '').strip()
+        if not n:
+            return n
+
+        # Remove leaked label prefixes from scraping, e.g. "AN "
+        n = re.sub(r'^AN\s+', '', n, flags=re.IGNORECASE)
+
+        # Remove accidental "an" prefix concatenation when followed by lowercase text
+        # Example: "Anabout source GmbH" -> "about source GmbH"
+        if len(n) > 3 and n[:2].lower() == 'an' and n[2].islower():
+            n = n[2:]
+
+        return n.strip()
+
     def add_or_update_customer(self, customer_data, invoice_number=None):
         """
         Add or update customer information
@@ -39,7 +56,7 @@ class CustomerDatabase:
         if not customer_data or not customer_data.get('name'):
             return None
         
-        customer_name = customer_data['name'].strip()
+        customer_name = self._sanitize_customer_name(customer_data['name'])
         
         # Create or update customer entry
         if customer_name not in self.customers:

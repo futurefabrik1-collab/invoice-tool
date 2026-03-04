@@ -63,8 +63,16 @@ def _normalize_label(text: str):
     return t
 
 
+def _clean_customer_name(name: str):
+    n = (name or '').strip()
+    n = re.sub(r'^AN\s+', '', n, flags=re.IGNORECASE)
+    if len(n) > 3 and n[:2].lower() == 'an' and n[2].islower():
+        n = n[2:]
+    return n.strip()
+
+
 def _normalize_customer_key(name: str):
-    t = (name or '').strip().lower()
+    t = _clean_customer_name(name).lower()
     t = t.replace('&', ' und ')
     t = re.sub(r'[^a-z0-9äöüß ]', ' ', t)
     # Remove common legal/company suffix noise for dedup
@@ -77,9 +85,10 @@ def simplify_customers(customers):
     """Merge near-duplicate customer names and keep strongest/recent record."""
     merged = {}
     for c in customers or []:
-        name = (c.get('name') or '').strip()
+        name = _clean_customer_name(c.get('name') or '')
         if not name:
             continue
+        c = {**c, 'name': name}
         k = _normalize_customer_key(name)
         if not k:
             k = _normalize_label(name)
