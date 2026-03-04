@@ -315,10 +315,7 @@ function NewApp() {
       }
     }
     
-    // Auto-update draft after file upload
-    if (prompt) {
-      handleUpdateDraft()
-    }
+    // Do not auto-update on file upload. User must explicitly click Update Draft.
   }
 
   const handleReferenceDrop = async (e) => {
@@ -395,16 +392,37 @@ function NewApp() {
       
       if (response.data.success) {
         const aiData = response.data.invoice_data || {}
-        const mergedInvoice = {
-          ...draftInvoice,
-          ...aiData,
-          // Preserve signature selection/name unless AI explicitly provides them
-          signature_file: aiData.signature_file ?? draftInvoice.signature_file,
-          signature_name: aiData.signature_name ?? draftInvoice.signature_name
-        }
-        setDraftInvoice(mergedInvoice)
+
+        // Default behavior: replace draft with AI output.
+        // Preserve existing content only when explicitly requested in prompt.
+        const preserveRequested = /(preserve|keep|beibehalten|erhalten|nicht\s+ändern)/i.test(prompt || '')
+
+        const nextInvoice = preserveRequested
+          ? {
+              ...draftInvoice,
+              ...aiData,
+              signature_file: aiData.signature_file ?? draftInvoice.signature_file,
+              signature_name: aiData.signature_name ?? draftInvoice.signature_name
+            }
+          : {
+              type: aiData.type || 'Rechnung',
+              invoice_number: aiData.invoice_number || '5526',
+              date: aiData.date || new Date().toLocaleDateString('de-DE'),
+              zeitraum: aiData.zeitraum || '',
+              expiry_date: aiData.expiry_date || '',
+              due_date: aiData.due_date || '',
+              client: aiData.client || { name: '', address: '', city: '' },
+              project_name: aiData.project_name || '',
+              project_description: aiData.project_description || '',
+              items: aiData.items || [],
+              notes: aiData.notes || '',
+              signature_file: aiData.signature_file || '',
+              signature_name: aiData.signature_name || 'Florian Manhardt'
+            }
+
+        setDraftInvoice(nextInvoice)
         // Trigger preview update
-        generatePreview(mergedInvoice)
+        generatePreview(nextInvoice)
       }
     } catch (error) {
       console.error('Error updating draft:', error)
