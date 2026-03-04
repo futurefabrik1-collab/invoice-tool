@@ -731,6 +731,18 @@ function NewApp() {
         {/* Left Panel - Controls */}
         <div className="controls-panel">
           <div className="control-group">
+            <label>Dokumenttyp</label>
+            <select
+              value={draftInvoice.type}
+              onChange={(e) => handleTypeChange(e.target.value)}
+              style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            >
+              <option value="Rechnung">Rechnung</option>
+              <option value="Angebot">Angebot</option>
+            </select>
+          </div>
+
+          <div className="control-group">
             <label>Example Invoice Import ({exampleInvoices.length} files in pool)</label>
             <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
               Drop a PDF in the top “Example Invoice PDF” dropzone to auto-scrape customer + billed items into the curated database.
@@ -919,16 +931,6 @@ function NewApp() {
 
           <div className="draft-form">
             <div className="form-row">
-              <div className="form-field">
-                <label>Type</label>
-                <select 
-                  value={draftInvoice.type}
-                  onChange={(e) => handleTypeChange(e.target.value)}
-                >
-                  <option value="Rechnung">Rechnung</option>
-                  <option value="Angebot">Angebot</option>
-                </select>
-              </div>
               <div className="form-field">
                 <label>{draftInvoice.type} Number</label>
                 <input
