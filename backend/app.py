@@ -368,7 +368,24 @@ def ai_generate_invoice():
         example_invoice = data.get('example_invoice')
         reference_files = data.get('reference_files', [])
         example_name = data.get('example_name')
-        
+
+        # Inject curated DB context (customers + item catalog) so AI uses real historical patterns
+        customers = customer_db.get_all_customers()[:80]
+        item_catalog = list(load_items_catalog().values())
+        item_catalog.sort(key=lambda x: x.get('use_count', 0), reverse=True)
+        item_catalog = item_catalog[:200]
+
+        db_context = {
+            'instruction': (
+                'Use this curated database as primary guidance for suggested line items and language. '
+                'Prioritize matching job types/descriptions from this catalog over generic defaults. '
+                'If prompt mentions baustelle/timelapse/construction, prefer timelapse-related entries when available.'
+            ),
+            'customers': customers,
+            'items_catalog': item_catalog
+        }
+        reference_files = reference_files + [f"CURATED_DATABASE_CONTEXT:\n{json.dumps(db_context, ensure_ascii=False)}"]
+
         # If example name provided, extract text from the PDF
         if example_name:
             from extract_invoice_text import get_example_invoice_text
@@ -376,13 +393,13 @@ def ai_generate_invoice():
             if example_text:
                 # Add the example invoice text to reference files
                 reference_files = reference_files + [f"Example Invoice ({example_name}):\n{example_text}"]
-        
+
         invoice_data = ai_assistant.generate_invoice_from_prompt(
-            prompt, 
-            example_invoice, 
+            prompt,
+            example_invoice,
             reference_files
         )
-        
+
         return jsonify({'success': True, 'invoice_data': invoice_data})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500

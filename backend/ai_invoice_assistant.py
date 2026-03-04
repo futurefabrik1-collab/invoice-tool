@@ -96,8 +96,11 @@ IMPORTANT for project_description:
 
 IMPORTANT for service bundling:
 - Analyze the prompt and reference documents to understand project needs
+- If reference files include CURATED_DATABASE_CONTEXT, treat it as highest-priority guidance for job types/descriptions/rates
+- Prefer catalog-matching line items over generic defaults whenever possible
+- For baustelle/timelapse/construction prompts, prioritize timelapse/construction monitoring item patterns when present in context
 - Suggest complete, realistic service packages (not just one item)
-- Use standard Future Fabrik pricing from the examples above
+- Use standard Future Fabrik pricing from the examples above unless curated context provides a better match
 - Bundle related services intelligently (e.g., video needs editing, 3D needs rendering)
 - Provide detailed descriptions for each line item
 - Quantities should be realistic for the project scope
