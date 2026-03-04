@@ -63,6 +63,16 @@ def _normalize_label(text: str):
     return t
 
 
+def _normalize_customer_key(name: str):
+    t = (name or '').strip().lower()
+    t = t.replace('&', ' und ')
+    t = re.sub(r'[^a-z0-9äöüß ]', ' ', t)
+    # Remove common legal/company suffix noise for dedup
+    t = re.sub(r'\b(gmbh|gbr|ag|kg|ug|mbh|ohg|co|co\.kg|co kg|e k|ek)\b', ' ', t)
+    t = re.sub(r'\s+', ' ', t).strip()
+    return t
+
+
 def simplify_customers(customers):
     """Merge near-duplicate customer names and keep strongest/recent record."""
     merged = {}
@@ -70,7 +80,9 @@ def simplify_customers(customers):
         name = (c.get('name') or '').strip()
         if not name:
             continue
-        k = _normalize_label(name)
+        k = _normalize_customer_key(name)
+        if not k:
+            k = _normalize_label(name)
         if k not in merged:
             merged[k] = dict(c)
             continue
@@ -87,11 +99,25 @@ def simplify_customers(customers):
             existing['city'] = c.get('city', '')
         if len(c.get('email', '') or '') > len(existing.get('email', '') or ''):
             existing['email'] = c.get('email', '')
+
+        # merge invoice history if present
+        inv_existing = set(existing.get('invoices', []) or [])
+        inv_new = set(c.get('invoices', []) or [])
+        existing['invoices'] = sorted([x for x in (inv_existing | inv_new) if x])
         merged[k] = existing
 
     rows = list(merged.values())
     rows.sort(key=lambda x: (x.get('name', '') or '').lower())
     return rows
+
+
+def persist_customer_cleanup():
+    before = len(customer_db.get_all_customers())
+    rows = simplify_customers(customer_db.get_all_customers())
+    rebuilt = {r.get('name', ''): r for r in rows if r.get('name')}
+    customer_db.customers = rebuilt
+    customer_db._save_db()
+    return {'before': before, 'after': len(rows)}
 
 
 def simplify_catalog_items(catalog_items, min_use_count=2):
@@ -379,7 +405,18 @@ def search_customers():
     try:
         query = request.args.get('q', '')
         customers = customer_db.search_customers(query)
+        customers = simplify_customers(customers)
         return jsonify({'success': True, 'customers': customers})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/customers/cleanup', methods=['POST'])
+def cleanup_customers():
+    """Persist a deduplicated customer list using normalization logic."""
+    try:
+        stats = persist_customer_cleanup()
+        return jsonify({'success': True, 'stats': stats})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
