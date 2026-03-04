@@ -679,6 +679,18 @@ function NewApp() {
         </div>
       </div>
 
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', margin: '10px 20px 0 20px' }}>
+        <button className="btn-update" onClick={handleSaveDraft} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
+          💾 Save
+        </button>
+        <button className="btn-update" onClick={handleLoadDraft} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
+          📂 Load
+        </button>
+        <button className="btn-generate" onClick={handleGeneratePDF} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
+          {loading ? 'Generating…' : '📥 Generate PDF'}
+        </button>
+      </div>
+
       <div className="main-container">
         {/* Left Panel - Controls */}
         <div className="controls-panel">
@@ -785,39 +797,12 @@ function NewApp() {
             )}
           </div>
 
-          <div className="control-group">
-            <label>Item Library ({itemCatalog.length})</label>
-            <input
-              type="text"
-              placeholder="🔍 Search items or job type..."
-              value={itemSearchTerm}
-              onChange={(e) => {
-                setItemSearchTerm(e.target.value)
-                loadItemsCatalog(e.target.value)
-              }}
-              className="search-input"
-              style={{ marginBottom: '10px', width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
-            />
-            <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', background: '#fff' }}>
-              {itemCatalog.slice(0, 50).map((it, idx) => (
-                <div key={`${it.description}-${idx}`} style={{ padding: '8px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 500 }}>{it.description}</div>
-                    <div style={{ fontSize: '11px', color: '#666' }}>{it.job_type} • €{Number(it.default_rate || 0).toFixed(2)}</div>
-                  </div>
-                  <button className="btn-add-item" onClick={() => addItemFromCatalog(it)}>Use</button>
-                </div>
-              ))}
-              {itemCatalog.length === 0 && <div style={{ padding: '12px', color: '#999' }}>No items found</div>}
-            </div>
-          </div>
-
           <button 
             className="btn-update"
             onClick={handleUpdateDraft}
             disabled={loading}
           >
-            {loading ? '⏳ Updating...' : '🔄 Update Draft'}
+            {loading ? '⏳ Updating...' : '🔄 Update Draft (AI sets initial items)'}
           </button>
           
           {/* Signature Upload Section */}
@@ -894,29 +879,6 @@ function NewApp() {
         <div className="draft-panel">
           <div className="draft-header">
             <h2>Live Draft</h2>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <button
-                className="btn-update"
-                onClick={handleSaveDraft}
-                disabled={loading}
-              >
-                💾 Save Draft
-              </button>
-              <button
-                className="btn-update"
-                onClick={handleLoadDraft}
-                disabled={loading}
-              >
-                📂 Load Draft
-              </button>
-              <button 
-                className="btn-generate"
-                onClick={handleGeneratePDF}
-                disabled={loading}
-              >
-                {loading ? 'Generating...' : '📥 Generate PDF'}
-              </button>
-            </div>
           </div>
 
           <div className="draft-form">
