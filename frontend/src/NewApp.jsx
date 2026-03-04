@@ -869,7 +869,7 @@ function NewApp() {
                   <option value="">— No signature selected —</option>
                   {signatures.map(sig => (
                     <option key={sig.filename} value={sig.filename}>
-                      {sig.filename}
+                      {sig.display_name || sig.filename}
                     </option>
                   ))}
                 </select>

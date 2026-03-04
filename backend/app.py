@@ -34,6 +34,7 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 SIGNATURES_DIR = os.path.join(BASE_DIR, 'signatures')
 CUSTOMER_DB_PATH = os.path.join(DATA_DIR, 'customers.json')
 ITEM_DB_PATH = os.path.join(DATA_DIR, 'items_catalog.json')
+SIGNATURES_META_PATH = os.path.join(DATA_DIR, 'signatures_meta.json')
 
 # Ensure directories exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -53,6 +54,20 @@ def load_items_catalog():
         except Exception:
             return {}
     return {}
+
+def load_signatures_meta():
+    if os.path.exists(SIGNATURES_META_PATH):
+        try:
+            with open(SIGNATURES_META_PATH, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+def save_signatures_meta(meta):
+    os.makedirs(os.path.dirname(SIGNATURES_META_PATH), exist_ok=True)
+    with open(SIGNATURES_META_PATH, 'w', encoding='utf-8') as f:
+        json.dump(meta, f, indent=2, ensure_ascii=False)
 
 def save_items_catalog(catalog):
     os.makedirs(os.path.dirname(ITEM_DB_PATH), exist_ok=True)
@@ -630,10 +645,22 @@ def upload_signature():
         safe_filename = f"{name_no_ext}_{int(datetime.now().timestamp())}{ext}"
         file_path = os.path.join(SIGNATURES_DIR, safe_filename)
         file.save(file_path)
+
+        # Persist human-friendly display name separately from physical filename
+        meta = load_signatures_meta()
+        display_name = (desired_name or name_no_ext).strip()
+        if display_name.lower().endswith(ext.lower()):
+            display_name = display_name[:-len(ext)]
+        meta[safe_filename] = {
+            'display_name': display_name or name_no_ext,
+            'created_at': datetime.now().isoformat()
+        }
+        save_signatures_meta(meta)
         
         return jsonify({
             'success': True, 
             'filename': safe_filename,
+            'display_name': meta[safe_filename]['display_name'],
             'path': file_path
         })
     except Exception as e:
@@ -644,11 +671,16 @@ def list_signatures():
     """List all uploaded signatures"""
     try:
         signatures = []
+        meta = load_signatures_meta()
         for filename in os.listdir(SIGNATURES_DIR):
             if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
                 file_path = os.path.join(SIGNATURES_DIR, filename)
+                display_name = (meta.get(filename) or {}).get('display_name')
+                if not display_name:
+                    display_name = os.path.splitext(filename)[0]
                 signatures.append({
                     'filename': filename,
+                    'display_name': display_name,
                     'path': file_path,
                     'uploaded': datetime.fromtimestamp(os.path.getctime(file_path)).isoformat()
                 })
@@ -681,6 +713,10 @@ def delete_signature(filename):
             return jsonify({'success': False, 'error': 'Signature not found'}), 404
 
         os.remove(file_path)
+        meta = load_signatures_meta()
+        if safe_name in meta:
+            del meta[safe_name]
+            save_signatures_meta(meta)
         return jsonify({'success': True, 'filename': safe_name})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -700,6 +736,10 @@ def delete_signature_post():
             return jsonify({'success': False, 'error': 'Signature not found'}), 404
 
         os.remove(file_path)
+        meta = load_signatures_meta()
+        if safe_name in meta:
+            del meta[safe_name]
+            save_signatures_meta(meta)
         return jsonify({'success': True, 'filename': safe_name})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
