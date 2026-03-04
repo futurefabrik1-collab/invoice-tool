@@ -53,7 +53,6 @@ function NewApp() {
   const [invoiceSearchTerm, setInvoiceSearchTerm] = useState('')
   const [customerSearchTerm, setCustomerSearchTerm] = useState('')
   const [itemCatalog, setItemCatalog] = useState([])
-  const [itemSearchTerm, setItemSearchTerm] = useState('')
   
   // UI State
   const [loading, setLoading] = useState(false)
@@ -444,6 +443,17 @@ function NewApp() {
       newItems[index] = {
         ...newItems[index],
         [field]: value
+      }
+
+      // If description matches item library, prefill curated/default rate
+      if (field === 'description') {
+        const match = itemCatalog.find(it => (it.description || '').toLowerCase() === String(value || '').toLowerCase())
+        if (match) {
+          const libRate = Number(match.curated_rate || match.default_rate || 0)
+          const qty = parseFloat(newItems[index].quantity || 1)
+          newItems[index].rate = libRate
+          newItems[index].amount = qty * libRate
+        }
       }
       
       // Auto-calculate amount if quantity or rate changes
@@ -1023,6 +1033,14 @@ function NewApp() {
                 <h3>Line Items</h3>
                 <button className="btn-add-item" onClick={addItem}>+ Add Item</button>
               </div>
+
+              <datalist id="item-library-options">
+                {itemCatalog.slice(0, 300).map((it, idx) => (
+                  <option key={`${it.description}-${idx}`} value={it.description}>
+                    {it.job_type} • €{Number(it.curated_rate || it.default_rate || 0).toFixed(2)}
+                  </option>
+                ))}
+              </datalist>
               
               {draftInvoice.items.map((item, index) => (
                 <div key={index} className="item-row">
@@ -1031,7 +1049,9 @@ function NewApp() {
                     <input
                       type="text"
                       value={item.description}
+                      list="item-library-options"
                       onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                      placeholder="Type or search from item library"
                     />
                   </div>
                   <div className="item-field item-quantity">
