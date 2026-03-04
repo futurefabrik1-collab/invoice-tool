@@ -267,34 +267,27 @@ class InvoiceGenerator:
             rate = float(item.get('rate', 0))
             total = quantity * rate
             
-            # Description limited to 1-2 lines for stable alignment
-            description = (item.get('description', '') or '').strip()
-            if not description:
-                description = "Leistung"
-            desc_width = 52  # slightly wider + more compact wrapping
-            wrapped_desc = wrap(description, width=desc_width) if description else ["Leistung"]
+            # Force single-line description for strict row alignment
+            description = (item.get('description', '') or '').strip() or "Leistung"
+            desc_width = 66
+            single_line = wrap(description, width=desc_width)[0] if description else "Leistung"
+            if len(description) > len(single_line):
+                single_line = single_line.rstrip() + "…"
 
-            item_line_count = min(len(wrapped_desc), 2)
-            estimated_item_height = (item_line_count * 3.2 + 3.5) * mm
+            estimated_item_height = 5.0 * mm
             if (y_main - estimated_item_height) < min_table_bottom_y:
-                # Keep readability: still render one compact line (no hard truncation)
-                wrapped_desc = wrap(description, width=65)[:1] if description else ["Leistung"]
-            
-            # Track starting position for this item
-            item_start_y = y_main
-            
-            # Draw description (max 2 lines, compact)
-            for line in wrapped_desc[:2]:
-                c.drawString(main_content_start, y_main, line)
-                y_main -= 3.2*mm
-            
-            # Draw numbers at the top line of the item
-            c.drawRightString(main_content_start + 80*mm, item_start_y, str(int(quantity)))
-            c.drawRightString(main_content_start + 105*mm, item_start_y, f"€{rate:,.2f}".replace(',', '.').replace('.', ',', 1))
-            c.drawRightString(right_margin, item_start_y, f"€{total:,.2f}".replace(',', '.').replace('.', ',', 1))
-            
-            # Add tight spacing between items
-            y_main -= 1.5*mm
+                break
+
+            row_y = y_main
+
+            # Draw aligned row content on same baseline
+            c.drawString(main_content_start, row_y, single_line)
+            c.drawRightString(main_content_start + 80*mm, row_y, str(int(quantity)))
+            c.drawRightString(main_content_start + 105*mm, row_y, f"€{rate:,.2f}".replace(',', '.').replace('.', ',', 1))
+            c.drawRightString(right_margin, row_y, f"€{total:,.2f}".replace(',', '.').replace('.', ',', 1))
+
+            # Move to next row (fixed height keeps alignment consistent)
+            y_main -= 5.0*mm
             
             # Light separator line between items (except last)
             if idx < len(cleaned_items) - 1:
