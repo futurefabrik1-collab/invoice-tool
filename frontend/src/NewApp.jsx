@@ -157,6 +157,29 @@ function NewApp() {
     }))
   }
 
+  const handleDeleteSignature = async () => {
+    const current = draftInvoice.signature_file || selectedSignature
+    if (!current) {
+      alert('Select a signature first')
+      return
+    }
+
+    if (!window.confirm(`Delete signature "${current}"?`)) return
+
+    try {
+      const response = await api.delete(`/api/signatures/delete/${encodeURIComponent(current)}`)
+      if (response.data.success) {
+        await loadSignatures()
+        setSelectedSignature(null)
+        setDraftInvoice(prev => ({ ...prev, signature_file: '' }))
+        alert('✅ Signature deleted')
+      }
+    } catch (error) {
+      console.error('Error deleting signature:', error)
+      alert('Error deleting signature: ' + (error.response?.data?.error || error.message))
+    }
+  }
+
   const loadNextInvoiceNumber = async (docType = 'Rechnung') => {
     try {
       const response = await api.get(`/api/invoice/next-number?type=${docType}`)
@@ -811,17 +834,28 @@ function NewApp() {
             {/* Compact selector instead of large gallery */}
             <div className="form-field" style={{ marginTop: '8px' }}>
               <label>Select uploaded signature</label>
-              <select
-                value={draftInvoice.signature_file || selectedSignature || ''}
-                onChange={(e) => selectSignature(e.target.value)}
-              >
-                <option value="">— No signature selected —</option>
-                {signatures.map(sig => (
-                  <option key={sig.filename} value={sig.filename}>
-                    {sig.filename}
-                  </option>
-                ))}
-              </select>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <select
+                  value={draftInvoice.signature_file || selectedSignature || ''}
+                  onChange={(e) => selectSignature(e.target.value)}
+                  style={{ flex: 1 }}
+                >
+                  <option value="">— No signature selected —</option>
+                  {signatures.map(sig => (
+                    <option key={sig.filename} value={sig.filename}>
+                      {sig.filename}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="btn-remove-small"
+                  onClick={handleDeleteSignature}
+                  title="Delete selected signature"
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
 
             {(draftInvoice.signature_file || selectedSignature) && (

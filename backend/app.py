@@ -434,6 +434,21 @@ def view_signature(filename):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/signatures/delete/<filename>', methods=['DELETE'])
+def delete_signature(filename):
+    """Delete a signature image from pool"""
+    try:
+        safe_name = os.path.basename(filename)
+        file_path = os.path.join(SIGNATURES_DIR, safe_name)
+
+        if not os.path.exists(file_path):
+            return jsonify({'success': False, 'error': 'Signature not found'}), 404
+
+        os.remove(file_path)
+        return jsonify({'success': True, 'filename': safe_name})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/upload-example', methods=['POST'])
 def upload_example():
     """Upload a new example invoice"""
