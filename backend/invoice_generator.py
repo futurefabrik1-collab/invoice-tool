@@ -128,96 +128,37 @@ class InvoiceGenerator:
         # MAIN CONTENT - starts after left column, aligned with company info
         y_main = height - 70*mm  # Aligned with left column company info start
         
-        # DATUM - with grey background
-        c.setFillColor(light_grey)
-        c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-        c.setFillColor(grey_color)
-        c.setFont("Helvetica-Bold", 7)
-        c.drawString(main_content_start, y_main, "DATUM")
-        y_main -= 5*mm
-        c.setFillColor(HexColor('#000000'))
-        c.setFont("Helvetica", 8)
-        c.drawString(main_content_start, y_main, data.get('date', ''))
-        y_main -= 8*mm
-        
-        # AN (Client) - with grey background
-        c.setFillColor(light_grey)
-        c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-        c.setFillColor(grey_color)
-        c.setFont("Helvetica-Bold", 7)
-        c.drawString(main_content_start, y_main, "AN")
-        y_main -= 5*mm
-        c.setFillColor(HexColor('#000000'))
-        c.setFont("Helvetica", 8)
+        # Compact top-right metadata blocks (single-row label/value for readability + space efficiency)
+        def draw_meta_row(label, value):
+            nonlocal y_main
+            if not value:
+                return
+            c.setFillColor(light_grey)
+            c.rect(main_content_start - 2*mm, y_main - 1.2*mm, right_margin - main_content_start + 2*mm, 4.6*mm, fill=1, stroke=0)
+            c.setFillColor(grey_color)
+            c.setFont("Helvetica-Bold", 6.8)
+            c.drawString(main_content_start, y_main, label)
+            c.setFillColor(HexColor('#000000'))
+            c.setFont("Helvetica", 7.6)
+            c.drawRightString(right_margin, y_main, str(value))
+            y_main -= 5.2*mm
+
         client = data.get('client', {})
-        client_lines = [
-            client.get('name', ''),
-            client.get('address', ''),
-            client.get('city', '')
-        ]
-        for line in client_lines:
-            if line:
-                c.drawString(main_content_start, y_main, line)
-                y_main -= 4*mm
-        y_main -= 5*mm
-        
-        # Invoice number (keep standalone for Rechnung only)
-        if invoice_type != "Angebot":
-            c.setFillColor(light_grey)
-            c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-            c.setFillColor(grey_color)
-            c.setFont("Helvetica-Bold", 7)
-            c.drawString(main_content_start, y_main, "RECHNUNGSNUMMER:")
-            y_main -= 5*mm
-            c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 8)
-            c.drawString(main_content_start, y_main, data.get('invoice_number', ''))
-            y_main -= 8*mm
-        
-        # ZEITRAUM - with grey background
-        zeitraum = data.get('zeitraum', '')
-        if zeitraum:
-            c.setFillColor(light_grey)
-            c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-            c.setFillColor(grey_color)
-            c.setFont("Helvetica-Bold", 7)
-            c.drawString(main_content_start, y_main, "ZEITRAUM:")
-            y_main -= 5*mm
-            c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 8)
-            c.drawString(main_content_start, y_main, zeitraum)
-            y_main -= 8*mm
-        
-        # EXPIRY (for Angebot) or DUE DATE (for Rechnung) - with grey background
+        client_compact = " · ".join([x for x in [client.get('name', ''), client.get('address', ''), client.get('city', '')] if x])
+
+        draw_meta_row("DATUM", data.get('date', ''))
+        draw_meta_row("AN", client_compact)
+
         if invoice_type == "Angebot":
-            # Combine ANGEBOTSNUMMER + GÜLTIG BIS in one line for cleaner compact layout
             expiry = data.get('expiry_date', '')
-            if expiry:
-                c.setFillColor(light_grey)
-                c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-                c.setFillColor(grey_color)
-                c.setFont("Helvetica-Bold", 7)
-                c.drawString(main_content_start, y_main, "ANGEBOTSNUMMER / GÜLTIG BIS:")
-                y_main -= 5*mm
-                c.setFillColor(HexColor('#000000'))
-                c.setFont("Helvetica", 8)
-                combined_offer_meta = f"{data.get('invoice_number', '')} / {expiry}" if data.get('invoice_number') else expiry
-                c.drawString(main_content_start, y_main, combined_offer_meta)
-                y_main -= 8*mm
+            combined_offer_meta = f"{data.get('invoice_number', '')} / {expiry}" if data.get('invoice_number') and expiry else (data.get('invoice_number', '') or expiry)
+            draw_meta_row("ANGEBOTSNUMMER / GÜLTIG BIS", combined_offer_meta)
         else:
-            # Rechnung due date
-            due_date = data.get('due_date', '')
-            if due_date:
-                c.setFillColor(light_grey)
-                c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-                c.setFillColor(grey_color)
-                c.setFont("Helvetica-Bold", 7)
-                c.drawString(main_content_start, y_main, "ZAHLUNGSZIEL:")
-                y_main -= 5*mm
-                c.setFillColor(HexColor('#000000'))
-                c.setFont("Helvetica", 8)
-                c.drawString(main_content_start, y_main, due_date)
-                y_main -= 8*mm
+            draw_meta_row("RECHNUNGSNUMMER", data.get('invoice_number', ''))
+            draw_meta_row("ZAHLUNGSZIEL", data.get('due_date', ''))
+
+        draw_meta_row("ZEITRAUM", data.get('zeitraum', ''))
+        y_main -= 2*mm
         
         # PROJEKTNAME (if provided) - with grey background
         project_name = data.get('project_name', '')
@@ -319,7 +260,7 @@ class InvoiceGenerator:
             cleaned_items.append(item)
 
         # Reserve lower page area for notes + signature
-        min_table_bottom_y = 68 * mm
+        min_table_bottom_y = 56 * mm
 
         for idx, item in enumerate(cleaned_items):
             quantity = float(item.get('quantity', 0))
@@ -336,8 +277,8 @@ class InvoiceGenerator:
             item_line_count = min(len(wrapped_desc), 2)
             estimated_item_height = (item_line_count * 3.2 + 3.5) * mm
             if (y_main - estimated_item_height) < min_table_bottom_y:
-                # Keep rows from disappearing: render one compact fallback row instead of dropping silently
-                wrapped_desc = [wrapped_desc[0][:70]]
+                # Keep readability: still render one compact line (no hard truncation)
+                wrapped_desc = wrap(description, width=65)[:1] if description else ["Leistung"]
             
             # Track starting position for this item
             item_start_y = y_main
