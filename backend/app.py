@@ -90,7 +90,7 @@ def simplify_customers(customers):
         merged[k] = existing
 
     rows = list(merged.values())
-    rows.sort(key=lambda x: (x.get('invoice_count', 0), x.get('last_used', '')), reverse=True)
+    rows.sort(key=lambda x: (x.get('name', '') or '').lower())
     return rows
 
 
@@ -125,7 +125,7 @@ def simplify_catalog_items(catalog_items, min_use_count=2):
     rows = list(grouped.values())
     # Hide one-off noisy items unless explicitly searched
     rows = [r for r in rows if r.get('use_count', 0) >= min_use_count]
-    rows.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
+    rows.sort(key=lambda x: (x.get('description', '') or '').lower())
     return rows
 
 def load_signatures_meta():
@@ -368,6 +368,7 @@ def get_customers():
         if not raw:
             customers = simplify_customers(customers)
         customers = customers[:max(1, min(limit, 300))]
+        customers.sort(key=lambda c: (c.get('name', '') or '').lower())
         return jsonify({'success': True, 'customers': customers})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -404,8 +405,8 @@ def get_catalog_items():
             if not raw:
                 catalog = simplify_catalog_items(catalog, min_use_count=2)
 
-        catalog.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
         catalog = catalog[:max(1, min(limit, 500))]
+        catalog.sort(key=lambda x: (x.get('description', '') or '').lower())
         return jsonify({'success': True, 'items': catalog})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
