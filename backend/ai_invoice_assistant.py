@@ -84,6 +84,8 @@ Generate invoice data in the following JSON format:
 }
 
 IMPORTANT:
+- Draft language must always be German (Deutsch).
+- All generated text fields must be in German: project_name, project_description, items[].description, notes, and any wording.
 - If type is "Angebot": include expiry_date (30 days from date), do NOT include due_date
 - If type is "Rechnung": include due_date (e.g., "14 Tage netto"), do NOT include expiry_date
 
