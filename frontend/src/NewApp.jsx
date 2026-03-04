@@ -789,24 +789,41 @@ function NewApp() {
           {/* Signature Upload Section */}
           <div className="control-group">
             <label>Signature</label>
-            
-            {/* Previously uploaded signatures */}
-            {signatures.length > 0 && (
-              <div className="signatures-list">
+
+            {/* Compact selector instead of large gallery */}
+            <div className="form-field" style={{ marginTop: '8px' }}>
+              <label>Select uploaded signature</label>
+              <select
+                value={draftInvoice.signature_file || selectedSignature || ''}
+                onChange={(e) => selectSignature(e.target.value)}
+              >
+                <option value="">— No signature selected —</option>
                 {signatures.map(sig => (
-                  <div 
-                    key={sig.filename}
-                    className={`signature-item ${(draftInvoice.signature_file || selectedSignature) === sig.filename ? 'selected' : ''}`}
-                    onClick={() => selectSignature(sig.filename)}
-                  >
-                    <img 
-                      src={`${window.location.origin}/api/signatures/view/${sig.filename}`}
-                      alt={sig.filename}
-                      className="signature-preview"
-                    />
-                    <div className="signature-name">{sig.filename}</div>
-                  </div>
+                  <option key={sig.filename} value={sig.filename}>
+                    {sig.filename}
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            {(draftInvoice.signature_file || selectedSignature) && (
+              <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img
+                  src={`${window.location.origin}/api/signatures/view/${draftInvoice.signature_file || selectedSignature}`}
+                  alt="Selected signature"
+                  style={{
+                    width: '140px',
+                    maxHeight: '56px',
+                    objectFit: 'contain',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    background: '#fff',
+                    padding: '4px'
+                  }}
+                />
+                <span style={{ fontSize: '12px', color: '#666' }}>
+                  {draftInvoice.signature_file || selectedSignature}
+                </span>
               </div>
             )}
 
