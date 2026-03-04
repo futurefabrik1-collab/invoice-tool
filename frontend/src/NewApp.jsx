@@ -599,8 +599,16 @@ function NewApp() {
     }))
   }
 
+  const calculateSubtotal = () => {
+    return draftInvoice.items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0)
+  }
+
+  const calculateTax = () => {
+    return calculateSubtotal() * 0.19
+  }
+
   const calculateTotal = () => {
-    return draftInvoice.items.reduce((sum, item) => sum + (item.amount || 0), 0)
+    return calculateSubtotal() + calculateTax()
   }
 
   return (
@@ -1062,7 +1070,9 @@ function NewApp() {
             </div>
 
             <div className="total-section">
-              <strong>Total: €{calculateTotal().toFixed(2)}</strong>
+              <div style={{ fontSize: '13px' }}>Subtotal (Netto): €{calculateSubtotal().toFixed(2)}</div>
+              <div style={{ fontSize: '13px' }}>MwSt (19%): €{calculateTax().toFixed(2)}</div>
+              <strong>Total (Brutto): €{calculateTotal().toFixed(2)}</strong>
             </div>
 
             <div className="notes-section">
