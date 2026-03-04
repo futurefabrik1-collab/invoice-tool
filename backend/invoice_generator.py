@@ -319,7 +319,7 @@ class InvoiceGenerator:
             cleaned_items.append(item)
 
         # Reserve lower page area for notes + signature
-        min_table_bottom_y = 82 * mm
+        min_table_bottom_y = 68 * mm
 
         for idx, item in enumerate(cleaned_items):
             quantity = float(item.get('quantity', 0))
@@ -328,32 +328,32 @@ class InvoiceGenerator:
             
             # Description limited to 1-2 lines for stable alignment
             description = (item.get('description', '') or '').strip()
-            desc_width = 48  # tuned to description column width
-            wrapped_desc = wrap(description, width=desc_width) if description else []
-
-            if not wrapped_desc:
-                continue
+            if not description:
+                description = "Leistung"
+            desc_width = 52  # slightly wider + more compact wrapping
+            wrapped_desc = wrap(description, width=desc_width) if description else ["Leistung"]
 
             item_line_count = min(len(wrapped_desc), 2)
-            estimated_item_height = (item_line_count * 4 + 6) * mm
+            estimated_item_height = (item_line_count * 3.2 + 3.5) * mm
             if (y_main - estimated_item_height) < min_table_bottom_y:
-                break
+                # Keep rows from disappearing: render one compact fallback row instead of dropping silently
+                wrapped_desc = [wrapped_desc[0][:70]]
             
             # Track starting position for this item
             item_start_y = y_main
             
-            # Draw description (max 2 lines)
+            # Draw description (max 2 lines, compact)
             for line in wrapped_desc[:2]:
                 c.drawString(main_content_start, y_main, line)
-                y_main -= 4*mm
+                y_main -= 3.2*mm
             
             # Draw numbers at the top line of the item
             c.drawRightString(main_content_start + 80*mm, item_start_y, str(int(quantity)))
             c.drawRightString(main_content_start + 105*mm, item_start_y, f"€{rate:,.2f}".replace(',', '.').replace('.', ',', 1))
             c.drawRightString(right_margin, item_start_y, f"€{total:,.2f}".replace(',', '.').replace('.', ',', 1))
             
-            # Add spacing between items
-            y_main -= 3*mm
+            # Add tight spacing between items
+            y_main -= 1.5*mm
             
             # Light separator line between items (except last)
             if idx < len(cleaned_items) - 1:
@@ -361,7 +361,7 @@ class InvoiceGenerator:
                 c.setLineWidth(0.3)
                 c.line(main_content_start, y_main, right_margin, y_main)
                 c.setStrokeColor(HexColor('#000000'))
-                y_main -= 3*mm
+                y_main -= 1.5*mm
         
         # Totals section with grey background
         totals = self.calculate_totals(items)
@@ -391,8 +391,12 @@ class InvoiceGenerator:
         c.drawString(main_content_start, y_main, "Summe")
         c.drawRightString(right_margin, y_main, f"€{totals['total']:,.2f}".replace(',', '.').replace('.', ',', 1))
         
-        # Footer - aligned to main content
+        # Footer - aligned to main content, with collision avoidance
         y_footer = 58*mm
+        # If content runs long, push footer lower so sections never overlap
+        y_footer = min(y_footer, y_main - 8*mm)
+        y_footer = max(y_footer, 34*mm)
+
         c.setFont("Helvetica", 6)
         footer_text = "Alle kommerziellen Nutzungsrechte und Vervielfältigungsrechte werden mit Begleichen der Rechnung an Sie übertragen."
         c.drawString(main_content_start, y_footer, footer_text)
