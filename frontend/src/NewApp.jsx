@@ -24,7 +24,7 @@ function NewApp() {
   // State for the draft invoice
   const [draftInvoice, setDraftInvoice] = useState({
     type: 'Rechnung',
-    invoice_number: '',
+    invoice_number: '5526',
     date: new Date().toLocaleDateString('de-DE'),
     zeitraum: '',
     expiry_date: '',  // For Angebot
@@ -183,25 +183,21 @@ function NewApp() {
     }
   }
 
-  const loadNextInvoiceNumber = async (docType = 'Rechnung') => {
-    try {
-      const response = await api.get(`/api/invoice/next-number?type=${docType}`)
-      if (response.data.success && response.data.next_number) {
-        setDraftInvoice(prev => ({
-          ...prev,
-          invoice_number: response.data.next_number
-        }))
-        console.log(`Auto-assigned ${docType} number: ${response.data.next_number}`)
-      }
-    } catch (error) {
-      console.log('Invoice numbering not configured - manual numbering')
-    }
+  const loadNextInvoiceNumber = async (_docType = 'Rechnung') => {
+    // Manual completion mode: always prefill required prefix only
+    setDraftInvoice(prev => ({
+      ...prev,
+      invoice_number: prev.invoice_number && prev.invoice_number.startsWith('5526') ? prev.invoice_number : '5526'
+    }))
   }
   
-  // Reload number when type changes
+  // Keep current entered suffix when type changes
   const handleTypeChange = (newType) => {
-    setDraftInvoice(prev => ({ ...prev, type: newType }))
-    loadNextInvoiceNumber(newType)
+    setDraftInvoice(prev => ({
+      ...prev,
+      type: newType,
+      invoice_number: prev.invoice_number && prev.invoice_number.startsWith('5526') ? prev.invoice_number : '5526'
+    }))
   }
 
   const loadExampleInvoices = async () => {
@@ -679,14 +675,29 @@ function NewApp() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', margin: '10px 20px 0 20px' }}>
-        <button className="btn-update" onClick={handleSaveDraft} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
-          💾 Save
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap', margin: '10px 20px 0 20px' }}>
+        <button
+          className="btn-generate"
+          onClick={handleSaveDraft}
+          disabled={loading}
+          style={{ padding: '8px 12px', fontSize: '12px', backgroundColor: '#2563eb' }}
+        >
+          💾 Save Draft
         </button>
-        <button className="btn-update" onClick={handleLoadDraft} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
-          📂 Load
+        <button
+          className="btn-generate"
+          onClick={handleLoadDraft}
+          disabled={loading}
+          style={{ padding: '8px 12px', fontSize: '12px', backgroundColor: '#7c3aed' }}
+        >
+          📂 Load Draft
         </button>
-        <button className="btn-generate" onClick={handleGeneratePDF} disabled={loading} style={{ padding: '8px 10px', fontSize: '12px' }}>
+        <button
+          className="btn-generate"
+          onClick={handleGeneratePDF}
+          disabled={loading}
+          style={{ padding: '8px 12px', fontSize: '12px', backgroundColor: '#059669' }}
+        >
           {loading ? 'Generating…' : '📥 Generate PDF'}
         </button>
       </div>
@@ -899,7 +910,7 @@ function NewApp() {
                   type="text"
                   value={draftInvoice.invoice_number}
                   onChange={(e) => handleDraftFieldChange('invoice_number', e.target.value)}
-                  placeholder="Auto-generated"
+                  placeholder="5526…"
                 />
               </div>
               <div className="form-field">
