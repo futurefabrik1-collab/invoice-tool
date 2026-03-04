@@ -9,6 +9,7 @@ from customer_db import CustomerDatabase
 from ai_invoice_assistant import AIInvoiceAssistant
 import json
 import re
+import statistics
 from datetime import datetime
 
 # Load environment variables from .env file
@@ -72,6 +73,18 @@ def infer_job_type(description: str):
         return 'Workshop'
     return 'Sonstiges'
 
+def _curate_rate(samples, fallback=0.0):
+    cleaned = [float(s) for s in (samples or []) if float(s) > 0]
+    if not cleaned:
+        return float(fallback or 0.0)
+    cleaned.sort()
+    # Trim extremes when enough data points exist
+    if len(cleaned) >= 5:
+        trim = max(1, int(len(cleaned) * 0.1))
+        cleaned = cleaned[trim:len(cleaned)-trim] or cleaned
+    return round(float(statistics.median(cleaned)), 2)
+
+
 def upsert_item_catalog(items, source='manual'):
     catalog = load_items_catalog()
     now = datetime.now().isoformat()
@@ -83,10 +96,14 @@ def upsert_item_catalog(items, source='manual'):
         rate = float(item.get('rate', 0) or 0)
         job_type = infer_job_type(desc)
         if key not in catalog:
+            samples = [rate] if rate > 0 else []
+            curated = _curate_rate(samples, fallback=rate)
             catalog[key] = {
                 'description': desc,
                 'job_type': job_type,
                 'default_rate': rate,
+                'curated_rate': curated,
+                'rate_samples': samples,
                 'use_count': 1,
                 'sources': [source],
                 'first_seen': now,
@@ -98,6 +115,11 @@ def upsert_item_catalog(items, source='manual'):
             entry['job_type'] = job_type or entry.get('job_type', 'Sonstiges')
             if rate > 0:
                 entry['default_rate'] = rate
+                samples = entry.get('rate_samples', [])
+                samples.append(rate)
+                # Keep DB small and recent enough
+                entry['rate_samples'] = samples[-40:]
+            entry['curated_rate'] = _curate_rate(entry.get('rate_samples', []), fallback=entry.get('default_rate', 0))
             entry['use_count'] = entry.get('use_count', 0) + 1
             entry['last_used'] = now
             sources = set(entry.get('sources', []))
@@ -108,6 +130,50 @@ def upsert_item_catalog(items, source='manual'):
 # Initialize AI assistant - it will now pick up the API key from environment
 print(f"Initializing AI Assistant with key: {os.getenv('OPENAI_API_KEY')[:20]}..." if os.getenv('OPENAI_API_KEY') else "Initializing AI Assistant without key")
 ai_assistant = AIInvoiceAssistant()
+
+def recurate_existing_catalog():
+    catalog = load_items_catalog()
+    changed = 0
+    for _, entry in catalog.items():
+        samples = entry.get('rate_samples', [])
+        if not samples and entry.get('default_rate', 0):
+            samples = [entry.get('default_rate', 0)]
+            entry['rate_samples'] = samples
+        new_rate = _curate_rate(samples, fallback=entry.get('default_rate', 0))
+        if float(entry.get('curated_rate', 0) or 0) != float(new_rate or 0):
+            entry['curated_rate'] = new_rate
+            changed += 1
+    save_items_catalog(catalog)
+    return {'entries': len(catalog), 'updated': changed}
+
+
+def apply_catalog_rates(invoice_data):
+    catalog = load_items_catalog()
+    if not isinstance(invoice_data, dict):
+        return invoice_data
+    items = invoice_data.get('items', []) or []
+    for item in items:
+        desc = re.sub(r'\s+', ' ', str(item.get('description', '') or '').strip().lower())
+        if not desc:
+            continue
+        match = None
+        if desc in catalog:
+            match = catalog.get(desc)
+        else:
+            # Fuzzy contains check for partial description matches
+            for k, v in catalog.items():
+                if desc in k or k in desc:
+                    match = v
+                    break
+        if match:
+            curated = float(match.get('curated_rate', 0) or match.get('default_rate', 0) or 0)
+            if curated > 0:
+                qty = float(item.get('quantity', 1) or 1)
+                item['rate'] = curated
+                item['amount'] = round(qty * curated, 2)
+    invoice_data['items'] = items
+    return invoice_data
+
 
 def extract_and_index_example_invoice(filename):
     from extract_invoice_text import get_example_invoice_text
@@ -228,6 +294,9 @@ def get_catalog_items():
     try:
         q = request.args.get('q', '').lower().strip()
         catalog = list(load_items_catalog().values())
+        for row in catalog:
+            if not row.get('curated_rate'):
+                row['curated_rate'] = _curate_rate(row.get('rate_samples', []), fallback=row.get('default_rate', 0))
         if q:
             catalog = [i for i in catalog if q in i.get('description', '').lower() or q in i.get('job_type', '').lower()]
         catalog.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
@@ -253,7 +322,15 @@ def rebuild_catalog_from_examples():
                     results.append({'file': filename, **extract_and_index_example_invoice(filename)})
                 except Exception as ex:
                     results.append({'file': filename, 'indexed': False, 'reason': str(ex)})
-        return jsonify({'success': True, 'results': results})
+        curation = recurate_existing_catalog()
+        return jsonify({'success': True, 'results': results, 'curation': curation})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/catalog/curate', methods=['POST'])
+def curate_catalog():
+    try:
+        return jsonify({'success': True, 'curation': recurate_existing_catalog()})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
@@ -372,6 +449,8 @@ def ai_generate_invoice():
         # Inject curated DB context (customers + item catalog) so AI uses real historical patterns
         customers = customer_db.get_all_customers()[:80]
         item_catalog = list(load_items_catalog().values())
+        for row in item_catalog:
+            row['curated_rate'] = row.get('curated_rate') or _curate_rate(row.get('rate_samples', []), fallback=row.get('default_rate', 0))
         item_catalog.sort(key=lambda x: x.get('use_count', 0), reverse=True)
         item_catalog = item_catalog[:200]
 
@@ -379,6 +458,7 @@ def ai_generate_invoice():
             'instruction': (
                 'Use this curated database as primary guidance for suggested line items and language. '
                 'Prioritize matching job types/descriptions from this catalog over generic defaults. '
+                'Use curated_rate as the preferred price reference (default_rate is secondary fallback). '
                 'If prompt mentions baustelle/timelapse/construction, prefer timelapse-related entries when available.'
             ),
             'customers': customers,
@@ -399,6 +479,9 @@ def ai_generate_invoice():
             example_invoice,
             reference_files
         )
+
+        # Enforce curated pricing from catalog after AI draft generation
+        invoice_data = apply_catalog_rates(invoice_data)
 
         return jsonify({'success': True, 'invoice_data': invoice_data})
     except Exception as e:
