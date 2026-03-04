@@ -95,9 +95,9 @@ function NewApp() {
       const namedFile = promptSignatureName(file.name)
       if (!namedFile) continue
 
-      const renamed = new File([file], namedFile, { type: file.type })
       const formData = new FormData()
-      formData.append('file', renamed)
+      formData.append('file', file)
+      formData.append('desired_name', namedFile)
       
       try {
         const response = await api.post('/api/signatures/upload', formData)
@@ -130,9 +130,9 @@ function NewApp() {
     const namedFile = promptSignatureName(file.name)
     if (!namedFile) return
 
-    const renamed = new File([file], namedFile, { type: file.type })
     const formData = new FormData()
-    formData.append('file', renamed)
+    formData.append('file', file)
+    formData.append('desired_name', namedFile)
     
     try {
       const response = await api.post('/api/signatures/upload', formData)

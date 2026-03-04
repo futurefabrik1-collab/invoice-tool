@@ -618,10 +618,15 @@ def upload_signature():
             return jsonify({'success': False, 'error': 'Only image files are allowed (PNG, JPG, JPEG, GIF, WEBP)'}), 400
         
         # Save to signatures directory (safe + unique filename)
-        base_name = secure_filename(file.filename)
+        desired_name = request.form.get('desired_name', '').strip()
+        chosen_name = desired_name if desired_name else file.filename
+
+        base_name = secure_filename(chosen_name)
         if not base_name:
             return jsonify({'success': False, 'error': 'Invalid filename'}), 400
         name_no_ext, ext = os.path.splitext(base_name)
+        if not ext:
+            ext = file_ext
         safe_filename = f"{name_no_ext}_{int(datetime.now().timestamp())}{ext}"
         file_path = os.path.join(SIGNATURES_DIR, safe_filename)
         file.save(file_path)
