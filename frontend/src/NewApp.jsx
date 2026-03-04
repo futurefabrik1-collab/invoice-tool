@@ -76,12 +76,26 @@ function NewApp() {
     }
   }
   
+  const promptSignatureName = (originalName) => {
+    const ext = (originalName.match(/\.[^.]+$/)?.[0] || '')
+    const base = originalName.replace(/\.[^.]+$/, '')
+    const entered = window.prompt('Name this signature (used in selector):', base)
+    if (entered === null) return null
+    const cleaned = entered.trim().replace(/[^a-zA-Z0-9 _-]/g, '').replace(/\s+/g, '-')
+    const safeBase = cleaned || base
+    return `${safeBase}${ext}`
+  }
+
   const handleSignatureUpload = async (e) => {
     const files = Array.from(e.target.files)
     
     for (const file of files) {
+      const namedFile = promptSignatureName(file.name)
+      if (!namedFile) continue
+
+      const renamed = new File([file], namedFile, { type: file.type })
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', renamed)
       
       try {
         const response = await api.post('/api/signatures/upload', formData)
@@ -94,7 +108,7 @@ function NewApp() {
             ...prev,
             signature_file: response.data.filename
           }))
-          alert(`Signature "${file.name}" uploaded successfully!`)
+          alert(`Signature "${namedFile}" uploaded successfully!`)
         }
       } catch (error) {
         console.error('Error uploading signature:', error)
@@ -111,8 +125,12 @@ function NewApp() {
     if (files.length === 0) return
     
     const file = files[0]
+    const namedFile = promptSignatureName(file.name)
+    if (!namedFile) return
+
+    const renamed = new File([file], namedFile, { type: file.type })
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', renamed)
     
     try {
       const response = await api.post('/api/signatures/upload', formData)
@@ -123,7 +141,7 @@ function NewApp() {
           ...prev,
           signature_file: response.data.filename
         }))
-        alert(`Signature "${file.name}" uploaded successfully!`)
+        alert(`Signature "${namedFile}" uploaded successfully!`)
       }
     } catch (error) {
       console.error('Error uploading signature:', error)
