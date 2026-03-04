@@ -293,7 +293,8 @@ class InvoiceGenerator:
             if idx < len(cleaned_items) - 1:
                 c.setStrokeColor(HexColor('#E0E0E0'))
                 c.setLineWidth(0.3)
-                c.line(main_content_start, y_main, right_margin, y_main)
+                # Move separator up by ~one text line for better visual alignment
+                c.line(main_content_start, y_main + 1.8*mm, right_margin, y_main + 1.8*mm)
                 c.setStrokeColor(HexColor('#000000'))
                 y_main -= 1.5*mm
         
