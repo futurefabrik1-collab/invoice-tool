@@ -809,6 +809,17 @@ function NewApp() {
                 ))}
               </div>
             )}
+
+            <div className="form-field" style={{ marginTop: '10px' }}>
+              <label>Signature Name (footer)</label>
+              <input
+                type="text"
+                value={draftInvoice.signature_name || ''}
+                onChange={(e) => handleDraftFieldChange('signature_name', e.target.value)}
+                placeholder="e.g., Florian Manhardt"
+              />
+            </div>
+
             {referenceFiles.length === 0 && (
               <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic', marginTop: '10px' }}>
                 No reference files. Use dropzone above.
@@ -1028,15 +1039,7 @@ function NewApp() {
                 rows={4}
               />
 
-              <div className="form-field" style={{ marginTop: '12px' }}>
-                <label>Signature Name (footer)</label>
-                <input
-                  type="text"
-                  value={draftInvoice.signature_name || ''}
-                  onChange={(e) => handleDraftFieldChange('signature_name', e.target.value)}
-                  placeholder="e.g., Florian Manhardt"
-                />
-              </div>
+
             </div>
           </div>
         </div>
