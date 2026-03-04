@@ -136,7 +136,7 @@ class InvoiceGenerator:
         c.drawString(main_content_start, y_main, "DATUM")
         y_main -= 5*mm
         c.setFillColor(HexColor('#000000'))
-        c.setFont("Helvetica", 9)
+        c.setFont("Helvetica", 8)
         c.drawString(main_content_start, y_main, data.get('date', ''))
         y_main -= 8*mm
         
@@ -148,7 +148,7 @@ class InvoiceGenerator:
         c.drawString(main_content_start, y_main, "AN")
         y_main -= 5*mm
         c.setFillColor(HexColor('#000000'))
-        c.setFont("Helvetica", 9)
+        c.setFont("Helvetica", 8)
         client = data.get('client', {})
         client_lines = [
             client.get('name', ''),
@@ -161,18 +161,18 @@ class InvoiceGenerator:
                 y_main -= 4*mm
         y_main -= 5*mm
         
-        # Invoice/Angebot Number - with grey background
-        invoice_number_label = "ANGEBOTSNUMMER:" if invoice_type == "Angebot" else "RECHNUNGSNUMMER:"
-        c.setFillColor(light_grey)
-        c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
-        c.setFillColor(grey_color)
-        c.setFont("Helvetica-Bold", 7)
-        c.drawString(main_content_start, y_main, invoice_number_label)
-        y_main -= 5*mm
-        c.setFillColor(HexColor('#000000'))
-        c.setFont("Helvetica", 9)
-        c.drawString(main_content_start, y_main, data.get('invoice_number', ''))
-        y_main -= 8*mm
+        # Invoice number (keep standalone for Rechnung only)
+        if invoice_type != "Angebot":
+            c.setFillColor(light_grey)
+            c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
+            c.setFillColor(grey_color)
+            c.setFont("Helvetica-Bold", 7)
+            c.drawString(main_content_start, y_main, "RECHNUNGSNUMMER:")
+            y_main -= 5*mm
+            c.setFillColor(HexColor('#000000'))
+            c.setFont("Helvetica", 8)
+            c.drawString(main_content_start, y_main, data.get('invoice_number', ''))
+            y_main -= 8*mm
         
         # ZEITRAUM - with grey background
         zeitraum = data.get('zeitraum', '')
@@ -184,24 +184,25 @@ class InvoiceGenerator:
             c.drawString(main_content_start, y_main, "ZEITRAUM:")
             y_main -= 5*mm
             c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 9)
+            c.setFont("Helvetica", 8)
             c.drawString(main_content_start, y_main, zeitraum)
             y_main -= 8*mm
         
         # EXPIRY (for Angebot) or DUE DATE (for Rechnung) - with grey background
         if invoice_type == "Angebot":
-            # Angebot expiry date
+            # Combine ANGEBOTSNUMMER + GÜLTIG BIS in one line for cleaner compact layout
             expiry = data.get('expiry_date', '')
             if expiry:
                 c.setFillColor(light_grey)
                 c.rect(main_content_start - 2*mm, y_main - 1*mm, right_margin - main_content_start + 2*mm, 4*mm, fill=1, stroke=0)
                 c.setFillColor(grey_color)
                 c.setFont("Helvetica-Bold", 7)
-                c.drawString(main_content_start, y_main, "GÜLTIG BIS:")
+                c.drawString(main_content_start, y_main, "ANGEBOTSNUMMER / GÜLTIG BIS:")
                 y_main -= 5*mm
                 c.setFillColor(HexColor('#000000'))
-                c.setFont("Helvetica", 9)
-                c.drawString(main_content_start, y_main, expiry)
+                c.setFont("Helvetica", 8)
+                combined_offer_meta = f"{data.get('invoice_number', '')} / {expiry}" if data.get('invoice_number') else expiry
+                c.drawString(main_content_start, y_main, combined_offer_meta)
                 y_main -= 8*mm
         else:
             # Rechnung due date
@@ -214,7 +215,7 @@ class InvoiceGenerator:
                 c.drawString(main_content_start, y_main, "ZAHLUNGSZIEL:")
                 y_main -= 5*mm
                 c.setFillColor(HexColor('#000000'))
-                c.setFont("Helvetica", 9)
+                c.setFont("Helvetica", 8)
                 c.drawString(main_content_start, y_main, due_date)
                 y_main -= 8*mm
         
@@ -228,7 +229,7 @@ class InvoiceGenerator:
             c.drawString(main_content_start, y_main, "PROJEKTNAME:")
             y_main -= 5*mm
             c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 9)
+            c.setFont("Helvetica", 8)
             c.drawString(main_content_start, y_main, project_name)
             y_main -= 8*mm
         
@@ -254,7 +255,7 @@ class InvoiceGenerator:
             y_main -= 5*mm
 
             c.setFillColor(HexColor('#000000'))
-            c.setFont("Helvetica", 9)
+            c.setFont("Helvetica", 8)
 
             from textwrap import wrap
             # Keep bullets compact and visually aligned with other sections
@@ -303,11 +304,24 @@ class InvoiceGenerator:
         y_main -= 5*mm
         
         # Line items with concise descriptions (1-2 lines per position)
-        c.setFont("Helvetica", 8)
+        c.setFont("Helvetica", 7.5)
         items = data.get('items', [])
         from textwrap import wrap
-        
-        for idx, item in enumerate(items):
+
+        # Remove visually empty rows from table output
+        cleaned_items = []
+        for item in items:
+            description = str(item.get('description', '') or '').strip()
+            quantity = float(item.get('quantity', 0) or 0)
+            rate = float(item.get('rate', 0) or 0)
+            if not description and quantity == 0 and rate == 0:
+                continue
+            cleaned_items.append(item)
+
+        # Reserve lower page area for notes + signature
+        min_table_bottom_y = 82 * mm
+
+        for idx, item in enumerate(cleaned_items):
             quantity = float(item.get('quantity', 0))
             rate = float(item.get('rate', 0))
             total = quantity * rate
@@ -315,7 +329,15 @@ class InvoiceGenerator:
             # Description limited to 1-2 lines for stable alignment
             description = (item.get('description', '') or '').strip()
             desc_width = 48  # tuned to description column width
-            wrapped_desc = wrap(description, width=desc_width) if description else ['']
+            wrapped_desc = wrap(description, width=desc_width) if description else []
+
+            if not wrapped_desc:
+                continue
+
+            item_line_count = min(len(wrapped_desc), 2)
+            estimated_item_height = (item_line_count * 4 + 6) * mm
+            if (y_main - estimated_item_height) < min_table_bottom_y:
+                break
             
             # Track starting position for this item
             item_start_y = y_main
@@ -334,7 +356,7 @@ class InvoiceGenerator:
             y_main -= 3*mm
             
             # Light separator line between items (except last)
-            if idx < len(items) - 1:
+            if idx < len(cleaned_items) - 1:
                 c.setStrokeColor(HexColor('#E0E0E0'))
                 c.setLineWidth(0.3)
                 c.line(main_content_start, y_main, right_margin, y_main)
@@ -370,10 +392,22 @@ class InvoiceGenerator:
         c.drawRightString(right_margin, y_main, f"€{totals['total']:,.2f}".replace(',', '.').replace('.', ',', 1))
         
         # Footer - aligned to main content
-        y_footer = 50*mm
+        y_footer = 58*mm
         c.setFont("Helvetica", 6)
         footer_text = "Alle kommerziellen Nutzungsrechte und Vervielfältigungsrechte werden mit Begleichen der Rechnung an Sie übertragen."
         c.drawString(main_content_start, y_footer, footer_text)
+
+        # Optional notes block above signature area
+        notes_text = str(data.get('notes', '') or '').strip()
+        if notes_text:
+            c.setFont("Helvetica-Bold", 7)
+            c.drawString(main_content_start, y_footer + 10*mm, "NOTIZEN")
+            c.setFont("Helvetica", 6.5)
+            from textwrap import wrap as _wrap_notes
+            note_y = y_footer + 6.5*mm
+            for line in _wrap_notes(notes_text, width=100)[:4]:
+                c.drawString(main_content_start, note_y, line)
+                note_y -= 3*mm
         
         # Signature area
         signature_name = str(data.get('signature_name', 'Florian Manhardt') or 'Florian Manhardt')
@@ -387,12 +421,12 @@ class InvoiceGenerator:
                 sig_height = 40*mm
                 sig_x = (width - sig_width) / 2
                 # Move signature further down (requested)
-                sig_y = 0*mm
+                sig_y = 8*mm
                 c.drawImage(signature_path, sig_x, sig_y, width=sig_width, height=sig_height, preserveAspectRatio=True, mask='auto')
 
         # Always print signature text block (name definable in draft)
         # Move down by ~2 lines and center-align
-        y_footer -= 13*mm
+        y_footer -= 16*mm
         c.setFont("Helvetica", 7)
         c.drawCentredString(width / 2, y_footer, "Mit freundlichen Grüßen,")
         y_footer -= 4*mm
