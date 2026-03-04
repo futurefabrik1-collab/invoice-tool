@@ -683,7 +683,7 @@ function NewApp() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap', margin: '10px 20px 0 20px' }}>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap', margin: '10px 20px 0 20px' }}>
         <button
           className="btn-generate"
           onClick={handleSaveDraft}
