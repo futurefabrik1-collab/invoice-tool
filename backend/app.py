@@ -55,6 +55,79 @@ def load_items_catalog():
             return {}
     return {}
 
+
+def _normalize_label(text: str):
+    t = (text or '').strip().lower()
+    t = re.sub(r'\s+', ' ', t)
+    t = re.sub(r'[^a-z0-9äöüß ]', '', t)
+    return t
+
+
+def simplify_customers(customers):
+    """Merge near-duplicate customer names and keep strongest/recent record."""
+    merged = {}
+    for c in customers or []:
+        name = (c.get('name') or '').strip()
+        if not name:
+            continue
+        k = _normalize_label(name)
+        if k not in merged:
+            merged[k] = dict(c)
+            continue
+
+        existing = merged[k]
+        # Prefer record with higher usage; keep richer address/city values
+        if c.get('invoice_count', 0) > existing.get('invoice_count', 0):
+            existing['name'] = c.get('name', existing.get('name', ''))
+        existing['invoice_count'] = max(existing.get('invoice_count', 0), c.get('invoice_count', 0))
+        existing['last_used'] = max(existing.get('last_used', ''), c.get('last_used', ''))
+        if len(c.get('address', '') or '') > len(existing.get('address', '') or ''):
+            existing['address'] = c.get('address', '')
+        if len(c.get('city', '') or '') > len(existing.get('city', '') or ''):
+            existing['city'] = c.get('city', '')
+        if len(c.get('email', '') or '') > len(existing.get('email', '') or ''):
+            existing['email'] = c.get('email', '')
+        merged[k] = existing
+
+    rows = list(merged.values())
+    rows.sort(key=lambda x: (x.get('invoice_count', 0), x.get('last_used', '')), reverse=True)
+    return rows
+
+
+def simplify_catalog_items(catalog_items, min_use_count=2):
+    """Deduplicate item options and keep only meaningful/high-signal options by default."""
+    grouped = {}
+    for row in catalog_items or []:
+        desc = (row.get('description') or '').strip()
+        if not desc:
+            continue
+        k = _normalize_label(desc)
+        if k not in grouped:
+            grouped[k] = dict(row)
+            grouped[k]['variants'] = 1
+            continue
+
+        ex = grouped[k]
+        ex['variants'] = ex.get('variants', 1) + 1
+        ex['use_count'] = max(ex.get('use_count', 0), row.get('use_count', 0))
+        ex['last_used'] = max(ex.get('last_used', ''), row.get('last_used', ''))
+        if len(desc) > len(ex.get('description', '') or ''):
+            ex['description'] = desc
+        # Blend rates conservatively
+        er = float(ex.get('curated_rate', 0) or ex.get('default_rate', 0) or 0)
+        rr = float(row.get('curated_rate', 0) or row.get('default_rate', 0) or 0)
+        if rr > 0 and er > 0:
+            ex['curated_rate'] = round((er + rr) / 2, 2)
+        elif rr > 0:
+            ex['curated_rate'] = rr
+        grouped[k] = ex
+
+    rows = list(grouped.values())
+    # Hide one-off noisy items unless explicitly searched
+    rows = [r for r in rows if r.get('use_count', 0) >= min_use_count]
+    rows.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
+    return rows
+
 def load_signatures_meta():
     if os.path.exists(SIGNATURES_META_PATH):
         try:
@@ -287,9 +360,14 @@ def download_output_pdf(filename):
 
 @app.route('/api/customers', methods=['GET'])
 def get_customers():
-    """Get all customers from database"""
+    """Get customers from database (simplified by default)."""
     try:
         customers = customer_db.get_all_customers()
+        raw = request.args.get('raw', '0') == '1'
+        limit = int(request.args.get('limit', '60'))
+        if not raw:
+            customers = simplify_customers(customers)
+        customers = customers[:max(1, min(limit, 300))]
         return jsonify({'success': True, 'customers': customers})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -308,13 +386,26 @@ def search_customers():
 def get_catalog_items():
     try:
         q = request.args.get('q', '').lower().strip()
+        raw = request.args.get('raw', '0') == '1'
+        limit = int(request.args.get('limit', '120'))
+
         catalog = list(load_items_catalog().values())
         for row in catalog:
             if not row.get('curated_rate'):
                 row['curated_rate'] = _curate_rate(row.get('rate_samples', []), fallback=row.get('default_rate', 0))
+
         if q:
+            # For explicit searches: include all matching rows, then simplify mildly
             catalog = [i for i in catalog if q in i.get('description', '').lower() or q in i.get('job_type', '').lower()]
+            if not raw:
+                catalog = simplify_catalog_items(catalog, min_use_count=1)
+        else:
+            # Default browsing should be clean and focused
+            if not raw:
+                catalog = simplify_catalog_items(catalog, min_use_count=2)
+
         catalog.sort(key=lambda x: (x.get('use_count', 0), x.get('last_used', '')), reverse=True)
+        catalog = catalog[:max(1, min(limit, 500))]
         return jsonify({'success': True, 'items': catalog})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
